@@ -12,7 +12,6 @@
     <script src="Axes.js"></script>
     <script src="Desk.js"></script>
     <script src="gl-main.js"></script>
-    <link rel="stylesheet" href="/~dulimarh/styles/handout.css">
     <style>
         html, body {
             width: 100%;
@@ -28,59 +27,6 @@
     </style>
 </head>
 <body onload="main()">
-<div id="intro">
-    This example demonstrates the following:
-    <ul>
-        <li>How to apply 3D transformations to basic geometric shapes to create a 3D object</li>
-        <li>How to render multiple instances of the object</li>
-        <li>How to split the canvas into two separate viewports and use perspective projection in one viewport and
-            orthographic projection in the other</li>
-        <li>Handle keyboard events (press x,X,y,Y,z,Z to move the object) </li>
-        <li>Use your browser's developer tools to browse the source code (Ctrl+Shift+I or Cmd+Opt+I)</li>
-    </ul>
-</div>
-
-Use the following shaders:
-<table align="center">
-    <tr><th>Vertex Shader</th><th>Fragment Shader</th></tr>
-    <tr valign="top">
-        <td>
-<pre class="cppcode">
-attribute vec3 vertexPos;
-attribute vec3 vertexCol;
-
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 modelCF;
-
-varying vec4 varColor;
-
-void main() {
-  gl_Position = projection * view * modelCF * vec4(vertexPos, 1);
-  gl_PointSize = 4.0;
-  varColor = vec4 (vertexCol, 1.0);
-}
-</pre>
-        </td>
-        <td>
-<pre class="cppcode">
-precision mediump float;
-
-varying vec4 varColor;
-void main() {
-  if (gl_FrontFacing)
-    gl_FragColor = varColor;
-  else
-    gl_FragColor = vec4(1, 0, 0, 1); // Red
-}
-</pre>
-            <p>To help with visual debugging your polygons, the above fragment
-                shader renders back facing polygons in red. Technically, all polygons
-                must be front facing so your should not see any red polygons.
-            </p>
-        </td>
-    </tr>
-</table>
 <canvas id="gl-canvas"></canvas>
 <div id="msg" style="text-align: center; font-size: 18pt"></div>
 </body>

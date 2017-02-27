@@ -3,34 +3,49 @@
  */
 class Desk {
     constructor (gl) {
-        this.band = new Torus(gl, 0.875, 0.12, 30, 10);
-        this.crown = new Torus(gl, 0.15, 0.05, 30, 10);
-        this.gem = new Cube(gl, 0.15, 2);
+        this.tableTop = new Cube(gl, 1, 1);
+        this.tableDrawer = new Cube(gl, 1, 1);
+        this.leg1 = new Cylinder(gl, 0.08, 0.08, 1.8, 10);
+        this.leg2 = new Cylinder(gl, 0.08, 0.08, 1.8, 10);
 
-        this.bandTransform = mat4.create();
-        mat4.rotateX(this.bandTransform, this.bandTransform, Math.PI/2);
-        let moveUp = vec3.fromValues (0, 0, 1.0);
-        this.crownTransform = mat4.create();
-        mat4.translate (this.crownTransform, this.crownTransform, moveUp);
-        let angle = Math.acos(1/Math.sqrt(3));
-        this.gemTransform = mat4.create();
-        let axisRot = vec3.fromValues(1, 1, 0);
-        mat4.fromRotation(this.gemTransform, angle, axisRot);
-        let moveItUp = mat4.fromTranslation(mat4.create(), moveUp);
+        let moveDown = vec3.fromValues (0, 0, -.95);
+        let moveLeft = vec3.fromValues (-1.45, 0, 0);
+        let moveRight = vec3.fromValues (1.8, 0, 0);
+        let moveBack = vec3.fromValues (0, 0.8, 0);
+        let moveForward = vec3.fromValues (0, -0.8, 0);
 
-        // genTransform = moveItUp * gemTransform
-        mat4.multiply (this.gemTransform, moveItUp, this.gemTransform);
+
+        this.tableTopTransformation = mat4.create();
+        mat4.scale(this.tableTopTransformation, this.tableTopTransformation, [4,2.2,0.1]);
+
+        this.tableDrawerTransformation = mat4.create();
+        mat4.translate(this.tableDrawerTransformation, this.tableDrawerTransformation, moveDown);
+        mat4.translate(this.tableDrawerTransformation, this.tableDrawerTransformation, moveLeft);
+        mat4.scale(this.tableDrawerTransformation, this.tableDrawerTransformation, [1.1, 2.2, 1.8]);
+
+        this.leg1Transformation = mat4.create();
+        mat4.translate(this.leg1Transformation, this.leg1Transformation, moveDown);
+        mat4.translate(this.leg1Transformation, this.leg1Transformation, moveRight);
+        mat4.translate(this.leg1Transformation, this.leg1Transformation, moveBack);
+
+        this.leg2Transformation = mat4.create();
+        mat4.translate(this.leg2Transformation, this.leg2Transformation, moveDown);
+        mat4.translate(this.leg2Transformation, this.leg2Transformation, moveRight);
+        mat4.translate(this.leg2Transformation, this.leg2Transformation, moveForward);
         this.tmp = mat4.create();
     }
 
     draw (vertexAttr, colorAttr, modelUniform, coordFrame) {
-        mat4.mul (this.tmp, coordFrame, this.bandTransform);
-        this.band.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, coordFrame, this.tableTopTransformation);
+        this.tableTop.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.crownTransform);
-        this.crown.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, coordFrame, this.tableDrawerTransformation);
+        this.tableDrawer.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.gemTransform);
-        this.gem.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, coordFrame, this.leg1Transformation);
+        this.leg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.leg2Transformation);
+        this.leg2.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
     }
 }
