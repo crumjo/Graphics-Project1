@@ -17,6 +17,7 @@ var projUnif, viewUnif, modelUnif;
 const IDENTITY = mat4.create();
 var coneSpinAngle;
 var obj;
+var obj2;
 var shaderProg;
 
 function main() {
@@ -61,6 +62,8 @@ function main() {
             gl.uniformMatrix4fv(modelUnif, false, ringCF);
 
             obj = new Desk(gl);
+            obj2 = new Joystick(gl);
+
             globalAxes = new Axes(gl);
             //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
             coneSpinAngle = 0;
@@ -135,6 +138,14 @@ function drawScene() {
         mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
         mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
         obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+
+    }
+
+    if (typeof obj2 !== 'undefined') {
+        var yPos = 0;
+        mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
+        mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
+        obj2.draw(posAttr, colAttr, modelUnif, tmpMat);
 
     }
 }
