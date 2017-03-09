@@ -5,7 +5,7 @@ class Monitor{
     constructor(gl){
         this.monitor = new Cube(gl, 1, 1);
         this.monitorTransformation = mat4.create();
-        mat4.scale(this.monitorTransformation, this.monitorTransformation, [1.5,0.1,0.8]);
+        mat4.scale(this.monitorTransformation, this.monitorTransformation, [1.2,0.1,0.7]);
 
         this.tmp = mat4.create();
     }

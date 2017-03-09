@@ -4,7 +4,7 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF;
+var orthoProjMat, persProjMat, viewMat, topViewMat, monitorCF, joystickCF;
 var axisBuff, tmpMat;
 var globalAxes;
 
@@ -47,10 +47,11 @@ function main() {
             persProjMat = mat4.create();
             viewMat = mat4.create();
             topViewMat = mat4.create();
-            ringCF = mat4.create();
+            monitorCF = mat4.create();
+            joystickCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
-                vec3.fromValues(6, -6, 2), /* eye */
+                vec3.fromValues(0, -6, 0), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             mat4.lookAt(topViewMat,
@@ -58,14 +59,14 @@ function main() {
                 vec3.fromValues(0,0,0),
                 vec3.fromValues(0,1,0)
             );
-            gl.uniformMatrix4fv(modelUnif, false, ringCF);
+            gl.uniformMatrix4fv(modelUnif, false, monitorCF);
 
             obj = new Desk(gl);
             obj2 = new Joystick(gl);
             obj3 = new Monitor(gl);
 
             globalAxes = new Axes(gl);
-            // mat4.rotateX(ringCF, ringCF, -Math.PI/2);
+            // mat4.rotateX(monitorCF, monitorCF, -Math.PI/2);
             coneSpinAngle = 0;
             resizeHandler();
             render();
@@ -99,27 +100,27 @@ function keyboardHandler(event) {
     const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, -1));
     switch (event.key) {
         case "x":
-            mat4.multiply(ringCF, transXneg, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(monitorCF, transXneg, monitorCF);  // monitorCF = Trans * monitorCF
             break;
         case "X":
-            mat4.multiply(ringCF, transXpos, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(monitorCF, transXpos, monitorCF);  // monitorCF = Trans * monitorCF
             break;
         case "y":
-            mat4.multiply(ringCF, transYneg, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(monitorCF, transYneg, monitorCF);  // monitorCF = Trans * monitorCF
             break;
         case "Y":
-            mat4.multiply(ringCF, transYpos, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(monitorCF, transYpos, monitorCF);  // monitorCF = Trans * monitorCF
             break;
         case "z":
-            mat4.multiply(ringCF, transZneg, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(monitorCF, transZneg, monitorCF);  // monitorCF = Trans * monitorCF
             break;
         case "Z":
-            mat4.multiply(ringCF, transZpos, ringCF);  // ringCF = Trans * ringCF
+            mat4.multiply(monitorCF, transZpos, monitorCF);  // monitorCF = Trans * monitorCF
             break;
     }
-    textOut.innerHTML = "Ring origin (" + ringCF[12].toFixed(1) + ", "
-        + ringCF[13].toFixed(1) + ", "
-        + ringCF[14].toFixed(1) + ")";
+    textOut.innerHTML = "Ring origin (" + monitorCF[12].toFixed(1) + ", "
+        + monitorCF[13].toFixed(1) + ", "
+        + monitorCF[14].toFixed(1) + ")";
 }
 
 function render() {
@@ -132,17 +133,34 @@ function render() {
 
 function drawScene() {
     globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
-    mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, 0, 0.6));
-    obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
+    // mat4.translate(tmpMat, tmpMat, vec3.fromValues(-1.2, 0, 0.55));
+    // obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
 
+    var xPos = -1.2;
+    for(let i = 0; i < 3; i++){
+        mat4.translate(tmpMat, tmpMat, vec3.fromValues(xPos, 0, 0.55));
+        if(i == 0){
+            mat4.rotateZ(tmpMat, tmpMat, Math.PI/6);
+        }
+        if(i == 1){
+            mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, 0.3, 0));
+        }
+        if(i == 2){
+            mat4.rotateZ(tmpMat, tmpMat, -Math.PI/6);
+        }
+        obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
+        xPos += 1.2
+        tmpMat = mat4.create();
+    }
+    tmpMat = mat4.create();
     mat4.scale(tmpMat, tmpMat, [0.2,0.2,0.2]);
-    mat4.translate(tmpMat, tmpMat, vec3.fromValues(8, -3, -2.5));
+    mat4.translate(tmpMat, tmpMat, vec3.fromValues(8, -3, 0));
     obj2.draw(posAttr, colAttr, modelUnif, tmpMat);
 
     if (typeof obj !== 'undefined') {
         var yPos = 0;
         mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-        mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
+        mat4.multiply(tmpMat, monitorCF, tmpMat);   // tmp = monitorCF * tmpMat
         obj.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
