@@ -16,8 +16,7 @@ var projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
 var coneSpinAngle;
-var obj;
-var obj2;
+var obj, obj2, obj3;
 var shaderProg;
 
 function main() {
@@ -47,25 +46,26 @@ function main() {
             orthoProjMat = mat4.create();
             persProjMat = mat4.create();
             viewMat = mat4.create();
-            //topViewMat = mat4.create();
+            topViewMat = mat4.create();
             ringCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
                 vec3.fromValues(6, -6, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
-            // mat4.lookAt(topViewMat,
-            //     vec3.fromValues(0,0,2),
-            //     vec3.fromValues(0,0,0),
-            //     vec3.fromValues(0,1,0)
-            // );
+            mat4.lookAt(topViewMat,
+                vec3.fromValues(0,0,2),
+                vec3.fromValues(0,0,0),
+                vec3.fromValues(0,1,0)
+            );
             gl.uniformMatrix4fv(modelUnif, false, ringCF);
 
             obj = new Desk(gl);
             obj2 = new Joystick(gl);
+            obj3 = new Monitor(gl);
 
             globalAxes = new Axes(gl);
-            //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
+            // mat4.rotateX(ringCF, ringCF, -Math.PI/2);
             coneSpinAngle = 0;
             resizeHandler();
             render();
@@ -125,28 +125,25 @@ function keyboardHandler(event) {
 function render() {
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     draw3D();
-    // drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
+    drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
     // // coneSpinAngle += 1;  /* add 1 degree */
     requestAnimationFrame(render);
 }
 
 function drawScene() {
     globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
+    mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, 0, 0.6));
+    obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
+
+    mat4.scale(tmpMat, tmpMat, [0.2,0.2,0.2]);
+    mat4.translate(tmpMat, tmpMat, vec3.fromValues(8, -3, -2.5));
+    obj2.draw(posAttr, colAttr, modelUnif, tmpMat);
 
     if (typeof obj !== 'undefined') {
         var yPos = 0;
         mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
         mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
         obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-
-    }
-
-    if (typeof obj2 !== 'undefined') {
-        var yPos = 0;
-        mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-        mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
-        obj2.draw(posAttr, colAttr, modelUnif, tmpMat);
-
     }
 }
 
@@ -158,10 +155,10 @@ function draw3D() {
     drawScene();
 }
 
-// function drawTopView() {
-//     /* We must update the projection and view matrices in the shader */
-//     gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
-//     gl.uniformMatrix4fv(viewUnif, false, topViewMat);
-//     gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
-//     drawScene();
-// }
+function drawTopView() {
+    /* We must update the projection and view matrices in the shader */
+    gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
+    gl.uniformMatrix4fv(viewUnif, false, topViewMat);
+    gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
+    drawScene();
+}
