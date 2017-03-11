@@ -4,9 +4,12 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, monitorCF, joystickCF;
+var orthoProjMat, persProjMat, viewMat, topViewMat, deskCF, joystickCF, monitorCF;
 var axisBuff, tmpMat;
 var globalAxes;
+var currSelection = 0;
+var objSelection = 0;
+var currentCF;
 
 /* Vertex shader attribute variables */
 var posAttr, colAttr;
@@ -20,6 +23,20 @@ var obj, obj2, obj3;
 var shaderProg;
 
 function main() {
+    /* setup event listener for drop-down menu */
+    let menu = document.getElementById("menu");
+    menu.addEventListener("change", menuSelected);
+
+    /* setup click listener for th "insert" button */
+    let button = document.getElementById("select");
+    button.addEventListener("click", createObject);
+
+    let objectMenu = document.getElementById("objectMenu");
+    objectMenu.addEventListener("change", objectSelected);
+
+    let button2 = document.getElementById("select2");
+    button2.addEventListener("click", selectObject);
+
     glCanvas = document.getElementById("gl-canvas");
     textOut = document.getElementById("msg");
     gl = WebGLUtils.setupWebGL(glCanvas, null);
@@ -47,26 +64,27 @@ function main() {
             persProjMat = mat4.create();
             viewMat = mat4.create();
             topViewMat = mat4.create();
-            monitorCF = mat4.create();
+            deskCF = mat4.create();
             joystickCF = mat4.create();
+            monitorCF = mat4.create();
             tmpMat = mat4.create();
-            mat4.lookAt(viewMat,
-                vec3.fromValues(0, -6, 0), /* eye */
-                vec3.fromValues(0, 0, 0), /* focal point */
-                vec3.fromValues(0, 0, 1)); /* up */
-            mat4.lookAt(topViewMat,
-                vec3.fromValues(0,0,2),
-                vec3.fromValues(0,0,0),
-                vec3.fromValues(0,1,0)
-            );
-            gl.uniformMatrix4fv(modelUnif, false, monitorCF);
+            // mat4.lookAt(viewMat,
+            //     vec3.fromValues(0, -6, 0), /* eye */
+            //     vec3.fromValues(0, 0, 0), /* focal point */
+            //     vec3.fromValues(0, 0, 1)); /* up */
+            // mat4.lookAt(topViewMat,
+            //     vec3.fromValues(0,0,2),
+            //     vec3.fromValues(0,0,0),
+            //     vec3.fromValues(0,1,0)
+            // );
+            gl.uniformMatrix4fv(modelUnif, false, deskCF);
 
             obj = new Desk(gl);
             obj2 = new Joystick(gl);
             obj3 = new Monitor(gl);
 
             globalAxes = new Axes(gl);
-            // mat4.rotateX(monitorCF, monitorCF, -Math.PI/2);
+            // mat4.rotateX(deskCF, deskCF, -Math.PI/2);
             coneSpinAngle = 0;
             resizeHandler();
             render();
@@ -100,27 +118,27 @@ function keyboardHandler(event) {
     const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, -1));
     switch (event.key) {
         case "x":
-            mat4.multiply(monitorCF, transXneg, monitorCF);  // monitorCF = Trans * monitorCF
+            mat4.multiply(currentCF, transXneg, currentCF);  // deskCF = Trans * deskCF
             break;
         case "X":
-            mat4.multiply(monitorCF, transXpos, monitorCF);  // monitorCF = Trans * monitorCF
+            mat4.multiply(currentCF, transXpos, currentCF);  // deskCF = Trans * deskCF
             break;
         case "y":
-            mat4.multiply(monitorCF, transYneg, monitorCF);  // monitorCF = Trans * monitorCF
+            mat4.multiply(currentCF, transYneg, currentCF);  // deskCF = Trans * deskCF
             break;
         case "Y":
-            mat4.multiply(monitorCF, transYpos, monitorCF);  // monitorCF = Trans * monitorCF
+            mat4.multiply(currentCF, transYpos, currentCF);  // deskCF = Trans * deskCF
             break;
         case "z":
-            mat4.multiply(monitorCF, transZneg, monitorCF);  // monitorCF = Trans * monitorCF
+            mat4.multiply(currentCF, transZneg, currentCF);  // deskCF = Trans * deskCF
             break;
         case "Z":
-            mat4.multiply(monitorCF, transZpos, monitorCF);  // monitorCF = Trans * monitorCF
+            mat4.multiply(currentCF, transZpos, currentCF);  // deskCF = Trans * deskCF
             break;
     }
-    textOut.innerHTML = "Ring origin (" + monitorCF[12].toFixed(1) + ", "
-        + monitorCF[13].toFixed(1) + ", "
-        + monitorCF[14].toFixed(1) + ")";
+    textOut.innerHTML = "Ring origin (" + deskCF[12].toFixed(1) + ", "
+        + deskCF[13].toFixed(1) + ", "
+        + deskCF[14].toFixed(1) + ")";
 }
 
 function render() {
@@ -138,29 +156,34 @@ function drawScene() {
 
     var xPos = -1.2;
     for(let i = 0; i < 3; i++){
-        mat4.translate(tmpMat, tmpMat, vec3.fromValues(xPos, 0, 0.55));
+        mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0.55));
+        mat4.multiply(tmpMat, monitorCF, tmpMat);
+        //mat4.translate(tmpMat, monitorCF, vec3.fromValues(xPos, 0, 0.55));
         if(i == 0){
+            // mat4.fromZRotation(tmpMat, Math.PI/6);
+            // mat4.multiply(tmpMat, monitorCF, tmpMat);
             mat4.rotateZ(tmpMat, tmpMat, Math.PI/6);
         }
         if(i == 1){
+            // mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0.3, 0));
+            // mat4.multiply(tmpMat, monitorCF, tmpMat);
             mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, 0.3, 0));
         }
         if(i == 2){
             mat4.rotateZ(tmpMat, tmpMat, -Math.PI/6);
         }
         obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
-        xPos += 1.2
-        tmpMat = mat4.create();
+        xPos += 1.2;
     }
     tmpMat = mat4.create();
-    mat4.scale(tmpMat, tmpMat, [0.2,0.2,0.2]);
-    mat4.translate(tmpMat, tmpMat, vec3.fromValues(8, -3, 0));
+    mat4.scale(tmpMat, joystickCF, [0.2,0.2,0.2]);
+    mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, -3, 0.2));
     obj2.draw(posAttr, colAttr, modelUnif, tmpMat);
 
     if (typeof obj !== 'undefined') {
         var yPos = 0;
         mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
-        mat4.multiply(tmpMat, monitorCF, tmpMat);   // tmp = monitorCF * tmpMat
+        mat4.multiply(tmpMat, deskCF, tmpMat);   // tmp = deskCF * tmpMat
         obj.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
 }
@@ -179,4 +202,58 @@ function drawTopView() {
     gl.uniformMatrix4fv(viewUnif, false, topViewMat);
     gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
     drawScene();
+}
+
+function menuSelected(ev) {
+    let sel = ev.currentTarget.selectedIndex;
+    currSelection = sel;
+    console.log("New selection is ", currSelection);
+}
+
+function createObject(){
+    switch(currSelection){
+        case 0:
+            mat4.lookAt(viewMat,
+                vec3.fromValues(0, -6, 0), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)); /* up */
+            break;
+        case 1:
+            mat4.lookAt(viewMat,
+                vec3.fromValues(6, -6, 2), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)); /* up */
+            break;
+        case 2:
+            mat4.lookAt(viewMat,
+                vec3.fromValues(0,0,6),
+                vec3.fromValues(0,0,0),
+                vec3.fromValues(0,1,0)
+            );
+            break;
+        case 3:
+            mat4.lookAt(viewMat,
+                vec3.fromValues(6, 0, 0), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)); /* up */
+    }
+}
+
+function objectSelected(ev){
+    let sel = ev.currentTarget.selectedIndex;
+    objSelection = sel;
+}
+
+function selectObject(){
+    switch (objSelection){
+        case 0:
+            currentCF = deskCF;
+            break;
+        case 1:
+            currentCF = monitorCF;
+            break;
+        case 2:
+            currentCF = joystickCF;
+            break;
+    }
 }
