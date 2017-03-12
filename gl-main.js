@@ -4,7 +4,7 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, deskCF, joystickCF, monitorCF;
+var orthoProjMat, persProjMat, viewMat, topViewMat, deskCF, joystickCF, monitorCF, chairCF;
 var axisBuff, tmpMat;
 var globalAxes;
 var currSelection = 0;
@@ -19,7 +19,7 @@ var projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
 var coneSpinAngle;
-var obj, obj2, obj3;
+var obj, obj2, obj3, obj4;
 var shaderProg;
 
 function main() {
@@ -67,6 +67,7 @@ function main() {
             deskCF = mat4.create();
             joystickCF = mat4.create();
             monitorCF = mat4.create();
+            chairCF = mat4.create();
             tmpMat = mat4.create();
             // mat4.lookAt(viewMat,
             //     vec3.fromValues(0, -6, 0), /* eye */
@@ -82,6 +83,7 @@ function main() {
             obj = new Desk(gl);
             obj2 = new Joystick(gl);
             obj3 = new Monitor(gl);
+            obj4 = new Chair(gl);
 
             globalAxes = new Axes(gl);
             // mat4.rotateX(deskCF, deskCF, -Math.PI/2);
@@ -186,6 +188,9 @@ function drawScene() {
         mat4.multiply(tmpMat, deskCF, tmpMat);   // tmp = deskCF * tmpMat
         obj.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
+
+    mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, 0));
+    obj4.draw(posAttr, colAttr, modelUnif, tmpMat);
 }
 
 function draw3D() {
@@ -254,6 +259,9 @@ function selectObject(){
             break;
         case 2:
             currentCF = joystickCF;
+            break;
+        case 3:
+            currentCF = chairCF;
             break;
     }
 }
