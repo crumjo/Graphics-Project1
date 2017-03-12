@@ -69,10 +69,10 @@ function main() {
             monitorCF = mat4.create();
             chairCF = mat4.create();
             tmpMat = mat4.create();
-            // mat4.lookAt(viewMat,
-            //     vec3.fromValues(0, -6, 0), /* eye */
-            //     vec3.fromValues(0, 0, 0), /* focal point */
-            //     vec3.fromValues(0, 0, 1)); /* up */
+            mat4.lookAt(viewMat,
+                vec3.fromValues(0, -6, 0), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)); /* up */
             // mat4.lookAt(topViewMat,
             //     vec3.fromValues(0,0,2),
             //     vec3.fromValues(0,0,0),
