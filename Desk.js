@@ -1,12 +1,20 @@
 /**
  * Created by Hans Dulimarta on 2/16/17.
  */
+
+this.red = vec3.fromValues(1.0, 0.0, 0.0);
+this.white = vec3.fromValues(1.0, 1.0, 1.0);
+this.grey = vec3.fromValues(170.0 / 255.0, 170.0 / 255.0, 170.0 / 255.0);
+this.black = vec3.fromValues (50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
+this.brown = vec3.fromValues (153.0 / 255.0, 102.0 / 255.0, 0.0);
+this.green = vec3.fromValues(0.0, 200.0 / 255.0, 0.0);
+
 class Desk {
     constructor (gl) {
-        this.tableTop = new Cube(gl, 1, 1);
-        this.tableDrawer = new Cube(gl, 1, 1);
-        this.leg1 = new Cylinder(gl, 0.08, 0.08, 1.8, 10);
-        this.leg2 = new Cylinder(gl, 0.08, 0.08, 1.8, 10);
+        this.tableTop = new Cube(gl, 1, 1, green, green, black);
+        this.tableDrawer = new Cube(gl, 1, 1, grey, black, grey);
+        this.leg1 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
+        this.leg2 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
 
         let moveDown = vec3.fromValues (0, 0, -.95);
         let moveLeft = vec3.fromValues (-1.45, 0, 0);

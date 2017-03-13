@@ -1,20 +1,26 @@
 /**
  * Created by NamNguyen on 3/12/17.
  */
+this.red = vec3.fromValues(1.0, 0.0, 0.0);
+this.white = vec3.fromValues(1.0, 1.0, 1.0);
+this.grey = vec3.fromValues(170.0 / 255.0, 170.0 / 255.0, 170.0 / 255.0);
+this.black = vec3.fromValues (50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
+this.brown = vec3.fromValues (153.0 / 255.0, 102.0 / 255.0, 0.0);
+
 class Chair{
     constructor(gl) {
-        this.chairBack = new Torus(gl, 1, 0.1, 30, 30);
-        this.chairBottom = new Cube(gl, 1, 1);
+        this.chairBack = new Torus(gl, 1, 0.1, 30, 30, black, grey);
+        this.chairBottom = new Cube(gl, 1, 1, black, grey, grey);
 
-        this.backSupport1 = new Cylinder(gl, 0.05, 0.05, 1, 10);
-        this.backSupport2 = new Cylinder(gl, 0.05, 0.05, 1.3, 10);
-        this.backSupport3 = new Cylinder(gl, 0.05, 0.05, 1.3, 10);
-        this.backSupport4 = new Cylinder(gl, 0.05, 0.05, 1, 10);
+        this.backSupport1 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown);
+        this.backSupport2 = new Cylinder(gl, 0.05, 0.05, 1.3, 10, white, brown);
+        this.backSupport3 = new Cylinder(gl, 0.05, 0.05, 1.3, 10, white, brown);
+        this.backSupport4 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown);
 
-        this.chairLeg1 = new Cylinder(gl, 0.05, 0.05, 1, 10);
-        this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10);
-        this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10);
-        this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10);
+        this.chairLeg1 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown);
+        this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown);
+        this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown);
+        this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown);
 
         this.chairBackTransform = mat4.create();
         mat4.rotateX(this.chairBackTransform, this.chairBackTransform, Math.PI/2);
