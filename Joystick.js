@@ -9,7 +9,7 @@ this.black = vec3.fromValues (50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
 
 class Joystick {
     constructor (gl) {
-        this.base = new Cube(gl, 1, 1, grey, black, grey);
+        this.base = new Cube(gl, 1, 5, grey, grey, black);
         this.stick = new Cylinder(gl, 0.125, 0.125, 1.0, 10, black, black);
         this.ball = new Globe(gl, 0.5, 20, 10, black, red);
         this.button = new Cylinder(gl, 0.25, 0.25, 0.1, 20, white, white);

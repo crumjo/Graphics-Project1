@@ -6,7 +6,7 @@ this.black = vec3.fromValues (50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
 
 class Monitor{
     constructor(gl){
-        this.monitor = new Cube(gl, 1, 1, black, grey, black);
+        this.monitor = new Cube(gl, 1, 5, black, grey, black);
         this.screen = new Cube(gl, 1, 1, black, black, black);
 
         this.monitorTransformation = mat4.create();

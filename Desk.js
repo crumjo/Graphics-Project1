@@ -12,23 +12,23 @@ this.blue = vec3.fromValues(0.0, 51.0 / 255.0, 204.0 / 255.0);
 
 class Desk {
     constructor (gl) {
-        this.tableTop = new Cube(gl, 1, 1, blue, grey, black);
-        this.tableDrawer = new Cube(gl, 1, 1, black, grey, white);
+        this.tableTop = new Cube(gl, 1, 5, blue, grey, black);
+        this.tableDrawer = new Cube(gl, 1, 5, black, grey, white);
+
         this.leg1 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
         this.leg2 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
         this.topHandle = new Torus(gl, 0.27, 0.05, 30, 30, white, grey);
         this.middleHandle = new Torus(gl, 0.27, 0.05, 30, 30, white, grey);
         this.bottomHandle = new Torus(gl, 0.27, 0.05, 30, 30, white, grey);
-        this.topDrawerFace = new Cube(gl, 1, 1, white, black, white);
-        this.midDrawerFace = new Cube(gl, 1, 1, white, black, white);
-        this.botDrawerFace = new Cube(gl, 1, 1, white, black, white);
+        this.topDrawerFace = new Cube(gl, 1, 5, white, black, white);
+        this.midDrawerFace = new Cube(gl, 1, 5, white, black, white);
+        this.botDrawerFace = new Cube(gl, 1, 5, white, black, white);
 
         let moveDown = vec3.fromValues (0, 0, -.95);
         let moveLeft = vec3.fromValues (-1.45, 0, 0);
         let moveRight = vec3.fromValues (1.8, 0, 0);
         let moveBack = vec3.fromValues (0, 0.8, 0);
         let moveForward = vec3.fromValues (0, -0.8, 0);
-
 
         this.tableTopTransformation = mat4.create();
         mat4.scale(this.tableTopTransformation, this.tableTopTransformation, [4,2.2,0.1]);

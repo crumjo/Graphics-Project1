@@ -152,7 +152,7 @@ function render() {
 }
 
 function drawScene() {
-    globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
+    //globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
     // mat4.translate(tmpMat, tmpMat, vec3.fromValues(-1.2, 0, 0.55));
     // obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
 
@@ -238,7 +238,7 @@ function createObject(){
             break;
         case 3:
             mat4.lookAt(viewMat,
-                vec3.fromValues(6, 0, 0), /* eye */
+                vec3.fromValues(4, -2, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
     }
