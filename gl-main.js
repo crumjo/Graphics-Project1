@@ -97,7 +97,7 @@ function resizeHandler() {
     glCanvas.width = window.innerWidth;
     glCanvas.height = 0.9 * window.innerHeight;
     if (glCanvas.width > glCanvas.height) { /* landscape */
-        let ratio = 2 * glCanvas.height / glCanvas.width;
+        let ratio = glCanvas.height / glCanvas.width;
         console.log("Landscape mode, ratio is " + ratio);
         mat4.ortho(orthoProjMat, -3, 3, -3 * ratio, 3 * ratio, -5, 5);
         mat4.perspective(persProjMat,
@@ -146,7 +146,7 @@ function keyboardHandler(event) {
 function render() {
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     draw3D();
-    drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
+    //drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
     // // coneSpinAngle += 1;  /* add 1 degree */
     requestAnimationFrame(render);
 }
@@ -197,7 +197,7 @@ function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, viewMat)
-    gl.viewport(0, 0, glCanvas.width/2, glCanvas.height);
+    gl.viewport(0, 0, glCanvas.width, glCanvas.height);
     drawScene();
 }
 
@@ -225,7 +225,7 @@ function createObject(){
             break;
         case 1:
             mat4.lookAt(viewMat,
-                vec3.fromValues(6, -6, 2), /* eye */
+                vec3.fromValues(-6, -6, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             break;
