@@ -37,31 +37,31 @@ class ShaderUtils {
 
     static loadFromFile(gl, vshaderName, fShaderName) {
         let files = [{"name": vshaderName, "type": gl.VERTEX_SHADER},
-                {"name": fShaderName, "type": gl.FRAGMENT_SHADER}]
-                .map(obj => {
+            {"name": fShaderName, "type": gl.FRAGMENT_SHADER}]
+            .map(obj => {
                 return ShaderUtils.loadFile(obj.name)
                     .then(result => {
-                    return {"text": result, "type": obj.type};
-    });
-    });
+                        return {"text": result, "type": obj.type};
+                    });
+            });
         return Promise.all(files)
-                .then(files => {
+            .then(files => {
                 let program = gl.createProgram();
-        for (let f of files) {
-            let sh = ShaderUtils.getShader(gl, f.text, f.type);
-            gl.attachShader(program, sh);
-        }
-        gl.linkProgram(program);
-        let error = gl.getProgramInfoLog(program);
-        if (error.length > 0) {
-            let msg = "Shader program failed to link: " + error;
-            throw msg;
-        }
-        return program;
-    })
-    .catch(err => {
-            ShaderUtils.showError(gl, err);
-    });
+                for (let f of files) {
+                    let sh = ShaderUtils.getShader(gl, f.text, f.type);
+                    gl.attachShader(program, sh);
+                }
+                gl.linkProgram(program);
+                let error = gl.getProgramInfoLog(program);
+                if (error.length > 0) {
+                    let msg = "Shader program failed to link: " + error;
+                    throw msg;
+                }
+                return program;
+            })
+            .catch(err => {
+                ShaderUtils.showError(gl, err);
+            });
     }
 
     static loadFromElement(gl, vertexId, fragmentId) {

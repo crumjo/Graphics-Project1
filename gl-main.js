@@ -4,22 +4,31 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, deskCF, joystickCF, monitorCF, chairCF;
-var axisBuff, tmpMat;
+var orthoProjMat, persProjMat, viewMat, viewMatInverse, topViewMat, deskCF, joystickCF, monitorCF, chairCF, lightCF;
+var axisBuff, tmpMat, normalMat, eyePos;
 var globalAxes;
 var currSelection = 0;
 var objSelection = 0;
 var currentCF;
+var lightPos, useLightingUnif;
+var normalUnif, isEnabledUnif;
+var lightingComponentEnabled = [true, true, true];
+
 
 /* Vertex shader attribute variables */
-var posAttr, colAttr;
+var posAttr, colAttr, normalAttr;
 
 /* Shader uniform variables */
-var projUnif, viewUnif, modelUnif;
-
+var projUnif, viewUnif, modelUnif, lightPosUnif;
+var objAmbientUnif, objTintUnif;
+var ambCoeffUnif, diffCoeffUnif, specCoeffUnif, shininessUnif;
 const IDENTITY = mat4.create();
+var lineBuff, normBuff, objTint;
+var shaderProg, redrawNeeded, showNormal, showLightVectors;
+
+// const IDENTITY = mat4.create();
 var coneSpinAngle;
-var obj, obj2, obj3, obj4;
+var obj, obj2, obj3, obj4, pointLight;
 var shaderProg;
 
 function main() {
@@ -37,6 +46,13 @@ function main() {
     let button2 = document.getElementById("select2");
     button2.addEventListener("click", selectObject);
 
+    let lightxslider = document.getElementById("lightx");
+    let lightyslider = document.getElementById("lighty");
+    let lightzslider = document.getElementById("lightz");
+    lightxslider.addEventListener('input', lightPosChanged, false);
+    lightyslider.addEventListener('input', lightPosChanged, false);
+    lightzslider.addEventListener('input', lightPosChanged, false);
+
     glCanvas = document.getElementById("gl-canvas");
     textOut = document.getElementById("msg");
     gl = WebGLUtils.setupWebGL(glCanvas, null);
@@ -53,32 +69,44 @@ function main() {
             /* enable hidden surface removal */
             //gl.enable(gl.CULL_FACE);     /* cull back facing polygons */
             //gl.cullFace(gl.BACK);
+            lineBuff = gl.createBuffer();
             posAttr = gl.getAttribLocation(prog, "vertexPos");
             colAttr = gl.getAttribLocation(prog, "vertexCol");
+            normalAttr = gl.getAttribLocation(prog, "vertexNormal");
+            lightPosUnif = gl.getUniformLocation(prog, "lightPosWorld");
             projUnif = gl.getUniformLocation(prog, "projection");
             viewUnif = gl.getUniformLocation(prog, "view");
             modelUnif = gl.getUniformLocation(prog, "modelCF");
+            normalUnif = gl.getUniformLocation(prog, "normalMat");
+            useLightingUnif = gl.getUniformLocation (prog, "useLighting");
+            isEnabledUnif = gl.getUniformLocation(prog, "isEnabled");
             gl.enableVertexAttribArray(posAttr);
             gl.enableVertexAttribArray(colAttr);
             orthoProjMat = mat4.create();
             persProjMat = mat4.create();
             viewMat = mat4.create();
+            normalMat = mat3.create();
+            viewMatInverse = mat4.create();
             topViewMat = mat4.create();
             deskCF = mat4.create();
             joystickCF = mat4.create();
             monitorCF = mat4.create();
             chairCF = mat4.create();
+            lightCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
                 vec3.fromValues(0, -6, 0), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
-            // mat4.lookAt(topViewMat,
-            //     vec3.fromValues(0,0,2),
-            //     vec3.fromValues(0,0,0),
-            //     vec3.fromValues(0,1,0)
-            // );
             gl.uniformMatrix4fv(modelUnif, false, deskCF);
+            lightPos = vec3.fromValues(0, 0, 4);
+            let vertices = [0, 0, 0, 1, 1, 1,
+                lightPos[0], 0, 0, 1, 1, 1,
+                lightPos[0], lightPos[1], 0, 1, 1, 1,
+                lightPos[0], lightPos[1], lightPos[2], 1, 1, 1];
+            gl.uniform3iv(isEnabledUnif, lightingComponentEnabled);
+            let yellow = vec3.fromValues (0xe7/255, 0xf2/255, 0x4d/255);
+            pointLight = new UniSphere(gl, 0.03, 3, yellow, yellow);
 
             obj = new Desk(gl);
             obj2 = new Joystick(gl);
@@ -88,6 +116,7 @@ function main() {
             globalAxes = new Axes(gl);
             // mat4.rotateX(deskCF, deskCF, -Math.PI/2);
             coneSpinAngle = 0;
+            redrawNeeded = true;
             resizeHandler();
             render();
         });
@@ -144,10 +173,11 @@ function keyboardHandler(event) {
 }
 
 function render() {
-    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    draw3D();
-    //drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
-    // // coneSpinAngle += 1;  /* add 1 degree */
+        gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+        draw3D();
+        /* looking at the XY plane, Z-axis points towards the viewer */
+        // coneSpinAngle += 1;  /* add 1 degree */
+        //redrawNeeded = false;
     requestAnimationFrame(render);
 }
 
@@ -155,6 +185,19 @@ function drawScene() {
     //globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
     // mat4.translate(tmpMat, tmpMat, vec3.fromValues(-1.2, 0, 0.55));
     // obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
+    gl.uniform1i(useLightingUnif, false);
+    gl.disableVertexAttribArray(normalAttr);
+    gl.enableVertexAttribArray(colAttr);
+
+    /* Use LINE_STRIP to mark light position */
+    gl.uniformMatrix4fv(modelUnif, false, IDENTITY);
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff);
+    gl.vertexAttribPointer(posAttr, 3, gl.FLOAT, false, 24, 0);
+    gl.vertexAttribPointer(colAttr, 3, gl.FLOAT, false, 24, 12);
+    gl.drawArrays(gl.LINE_STRIP, 0, 4);
+
+    /* Draw the light source (a sphere) using its own coordinate frame */
+    pointLight.draw(posAttr, colAttr, modelUnif, lightCF);
 
     var xPos = -1.2;
     for(let i = 0; i < 3; i++){
@@ -196,16 +239,8 @@ function drawScene() {
 function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
-    gl.uniformMatrix4fv(viewUnif, false, viewMat)
+    gl.uniformMatrix4fv(viewUnif, false, viewMat);
     gl.viewport(0, 0, glCanvas.width, glCanvas.height);
-    drawScene();
-}
-
-function drawTopView() {
-    /* We must update the projection and view matrices in the shader */
-    gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
-    gl.uniformMatrix4fv(viewUnif, false, topViewMat);
-    gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
     drawScene();
 }
 
@@ -264,4 +299,28 @@ function selectObject(){
             currentCF = chairCF;
             break;
     }
+}
+
+function lightPosChanged(ev) {
+    switch (ev.target.id) {
+        case 'lightx':
+            lightPos[0] = ev.target.value;
+            break;
+        case 'lighty':
+            lightPos[1] = ev.target.value;
+            break;
+        case 'lightz':
+            lightPos[2] = ev.target.value;
+            break;
+    }
+    mat4.fromTranslation(lightCF, lightPos);
+    gl.uniform3fv (lightPosUnif, lightPos);
+    let vertices = [
+        0, 0, 0, 1, 1, 1,
+        lightPos[0], 0, 0, 1, 1, 1,
+        lightPos[0], lightPos[1], 0, 1, 1, 1,
+        lightPos[0], lightPos[1], lightPos[2], 1, 1, 1];
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff);
+    gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
+    redrawNeeded = true;
 }
