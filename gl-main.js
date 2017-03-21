@@ -24,7 +24,7 @@ var objAmbientUnif, objTintUnif;
 var ambCoeffUnif, diffCoeffUnif, specCoeffUnif, shininessUnif;
 const IDENTITY = mat4.create();
 var lineBuff, normBuff, objTint;
-var shaderProg, redrawNeeded, showNormal, showLightVectors;
+var redrawNeeded, showNormal, showLightVectors;
 
 // const IDENTITY = mat4.create();
 var coneSpinAngle;
@@ -70,6 +70,7 @@ function main() {
             //gl.enable(gl.CULL_FACE);     /* cull back facing polygons */
             //gl.cullFace(gl.BACK);
             lineBuff = gl.createBuffer();
+            normBuff = gl.createBuffer();
             posAttr = gl.getAttribLocation(prog, "vertexPos");
             colAttr = gl.getAttribLocation(prog, "vertexCol");
             normalAttr = gl.getAttribLocation(prog, "vertexNormal");
@@ -79,9 +80,10 @@ function main() {
             modelUnif = gl.getUniformLocation(prog, "modelCF");
             normalUnif = gl.getUniformLocation(prog, "normalMat");
             useLightingUnif = gl.getUniformLocation (prog, "useLighting");
+            objTintUnif = gl.getUniformLocation(prog, "objectTint");
             isEnabledUnif = gl.getUniformLocation(prog, "isEnabled");
-            gl.enableVertexAttribArray(posAttr);
-            gl.enableVertexAttribArray(colAttr);
+             gl.enableVertexAttribArray(posAttr);
+            // gl.enableVertexAttribArray(colAttr);
             orthoProjMat = mat4.create();
             persProjMat = mat4.create();
             viewMat = mat4.create();
@@ -94,6 +96,10 @@ function main() {
             chairCF = mat4.create();
             lightCF = mat4.create();
             tmpMat = mat4.create();
+            ambCoeffUnif = gl.getUniformLocation(prog, "ambientCoeff");
+            diffCoeffUnif = gl.getUniformLocation(prog, "diffuseCoeff");
+            specCoeffUnif = gl.getUniformLocation(prog, "specularCoeff");
+            shininessUnif = gl.getUniformLocation(prog, "shininess");
             mat4.lookAt(viewMat,
                 vec3.fromValues(0, -6, 0), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
@@ -104,16 +110,24 @@ function main() {
                 lightPos[0], 0, 0, 1, 1, 1,
                 lightPos[0], lightPos[1], 0, 1, 1, 1,
                 lightPos[0], lightPos[1], lightPos[2], 1, 1, 1];
-            gl.uniform3iv(isEnabledUnif, lightingComponentEnabled);
+            gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff);
+            gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
+
+            gl.uniform3i(isEnabledUnif, true, true, true);
             let yellow = vec3.fromValues (0xe7/255, 0xf2/255, 0x4d/255);
             pointLight = new UniSphere(gl, 0.03, 3, yellow, yellow);
+
+            gl.uniform1f(ambCoeffUnif, 0.19);
+            gl.uniform1f(diffCoeffUnif, 0.50);
+            gl.uniform1f(specCoeffUnif, 0.50);
+            gl.uniform1f(shininessUnif, 51);
+            objTint = vec3.fromValues(170/255, 170/255, 170/255);
+            gl.uniform3fv(objTintUnif, objTint);
 
             obj = new Desk(gl);
             obj2 = new Joystick(gl);
             obj3 = new Monitor(gl);
             obj4 = new Chair(gl);
-
-            globalAxes = new Axes(gl);
             // mat4.rotateX(deskCF, deskCF, -Math.PI/2);
             coneSpinAngle = 0;
             redrawNeeded = true;
@@ -231,17 +245,27 @@ function drawScene() {
         mat4.multiply(tmpMat, deskCF, tmpMat);   // tmp = deskCF * tmpMat
         obj.draw(posAttr, colAttr, modelUnif, tmpMat);
     }
-
+    gl.uniform1i (useLightingUnif, true);
+    gl.disableVertexAttribArray(colAttr);
+    gl.enableVertexAttribArray(normalAttr);
     mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, 0));
-    obj4.draw(posAttr, colAttr, modelUnif, tmpMat);
+    obj4.draw(posAttr, normalAttr, modelUnif, tmpMat);
 }
 
 function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, viewMat);
+    mat4.mul (tmpMat, viewMat, chairCF);
+    mat3.normalFromMat4 (normalMat, tmpMat);
+    gl.uniformMatrix3fv (normalUnif, false, normalMat);
     gl.viewport(0, 0, glCanvas.width, glCanvas.height);
     drawScene();
+    if (typeof obj4 !== 'undefined') {
+        gl.uniform1i(useLightingUnif, false);
+        gl.disableVertexAttribArray(normalAttr);
+        gl.enableVertexAttribArray(colAttr);
+    }
 }
 
 function menuSelected(ev) {

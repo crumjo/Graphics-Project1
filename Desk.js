@@ -7,7 +7,6 @@ this.white = vec3.fromValues(1.0, 1.0, 1.0);
 this.grey = vec3.fromValues(170.0 / 255.0, 170.0 / 255.0, 170.0 / 255.0);
 this.black = vec3.fromValues (50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
 this.brown = vec3.fromValues (153.0 / 255.0, 102.0 / 255.0, 0.0);
-this.green = vec3.fromValues(0.0, 200.0 / 255.0, 0.0);
 this.blue = vec3.fromValues(0.0, 51.0 / 255.0, 204.0 / 255.0);
 
 class Desk {
@@ -17,9 +16,9 @@ class Desk {
 
         this.leg1 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
         this.leg2 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
-        this.topHandle = new Torus(gl, 0.27, 0.05, 30, 30, white, grey);
-        this.middleHandle = new Torus(gl, 0.27, 0.05, 30, 30, white, grey);
-        this.bottomHandle = new Torus(gl, 0.27, 0.05, 30, 30, white, grey);
+        this.topHandle = new Torus(gl, 0.27, 0.05, 30, 30);
+        this.middleHandle = new Torus(gl, 0.27, 0.05, 30, 30);
+        this.bottomHandle = new Torus(gl, 0.27, 0.05, 30, 30);
         this.topDrawerFace = new Cube(gl, 1, 5, white, black, white);
         this.midDrawerFace = new Cube(gl, 1, 5, white, black, white);
         this.botDrawerFace = new Cube(gl, 1, 5, white, black, white);

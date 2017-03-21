@@ -9,7 +9,7 @@ this.brown = vec3.fromValues (153.0 / 255.0, 102.0 / 255.0, 0.0);
 
 class Chair{
     constructor(gl) {
-        this.chairBack = new Torus(gl, 1, 0.1, 30, 30, black, grey);
+        this.chairBack = new Torus(gl, 1, 0.1, 30, 30);
         this.chairBottom = new Cube(gl, 1, 5, grey, grey, black);
 
         this.backSupport1 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
