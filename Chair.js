@@ -18,9 +18,9 @@ class Chair{
         this.backSupport4 = new Cylinder(gl, 0.05, 0.05, 1.1, 10, 10, white, brown, brown);
 
         this.chairLeg1 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
-        this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
-        this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
-        this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
+        // this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
+        // this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
+        // this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
 
         this.chairBackTransform = mat4.create();
         mat4.rotateX(this.chairBackTransform, this.chairBackTransform, Math.PI/2);
@@ -67,7 +67,6 @@ class Chair{
         mat4.translate(this.backSupport4Transform, this.backSupport4Transform, vec3.fromValues(0.3, 0, 0));
         mat4.translate(this.backSupport4Transform, this.backSupport4Transform, vec3.fromValues(0, 0, -0.5));
 
-
         this.localCoord = mat4.create();
 
         this.tmp = mat4.create();
@@ -77,7 +76,7 @@ class Chair{
 
         this.localCoord = mat4.copy(this.localCoord, coordFrame);
 
-        mat4.translate(this.localCoord, this.localCoord, vec3.fromValues(0, -0.125, 1.675));
+        mat4.translate(this.localCoord, this.localCoord, vec3.fromValues(0, 0, 1.55));
 
         mat4.mul (this.tmp, this.localCoord, this.chairBackTransform);
         this.chairBack.draw(vertexAttr, colorAttr, modelUniform, this.tmp);

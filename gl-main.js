@@ -5,7 +5,7 @@
 var gl;
 var glCanvas, textOut;
 var orthoProjMat, persProjMat, viewMat, viewMatInverse, topViewMat, deskCF, joystickCF, monitorCF, chairCF, light1CF, light2CF;
-var axisBuff, tmpMat, normalMat, eyePos;
+var axisBuff, tmpMat, tmpMat2, normalMat, eyePos;
 var currSelection = 0;
 var objSelection = 0;
 var currentCF;
@@ -13,6 +13,9 @@ var light1Pos, light2Pos, useLightingUnif, useLightingUnif2;
 var normalUnif, isEnabledUnif;
 var lightingComponentEnabled = [true, true, true];
 var timeStamp;
+var totalAngle = 0.0;
+var chairQuat;
+var startAnimation;
 const CHAIR_TIP_SPEED = 45;
 
 
@@ -65,6 +68,12 @@ function main() {
         redrawNeeded = true;
     }, false);
 
+    let animationCheckbox = document.getElementById("animate");
+    animationCheckbox.addEventListener('change', ev => {
+        startAnimation = ev.target.checked;
+        redrawNeeded = true;
+    }, false);
+
     let lightxslider = document.getElementById("lightx");
     let lightyslider = document.getElementById("lighty");
     let lightzslider = document.getElementById("lightz");
@@ -90,12 +99,14 @@ function main() {
     textOut = document.getElementById("msg");
     gl = WebGLUtils.setupWebGL(glCanvas, null);
     axes = new Axes(gl);
-    axisBuff = gl.createBuffer()
+    axisBuff = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, axisBuff);
     window.addEventListener("resize", resizeHandler, false);
     window.addEventListener("keypress", keyboardHandler, false);
     ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
         .then(prog => {
+            this.chairAnimation = mat4.create();
+            chairQuat= quat.create();
             shaderProg = prog;
             gl.useProgram(prog);
             gl.clearColor(0, 0, 0, 1);
@@ -131,7 +142,6 @@ function main() {
             monitorCF = mat4.create();
 
             chairCF = mat4.create();
-            // mat4.translate(chairCF, chairCF, vec3.fromValues(1.0, 1.0, 0));
 
             light1CF = mat4.create();
             light2CF = mat4.create();
@@ -183,7 +193,8 @@ function main() {
             obj2 = new Joystick(gl);
             obj3 = new Monitor(gl);
             obj4 = new Chair(gl);
-            coneSpinAngle = 0;
+            mat4.translate(chairCF, chairCF, vec3.fromValues(0, -1.5, -1.5));
+
             redrawNeeded = true;
             resizeHandler();
             render();
@@ -240,6 +251,9 @@ function keyboardHandler(event) {
 function render() {
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
         draw3D();
+        if(startAnimation){
+            animateChair();
+        }
         /* looking at the XY plane, Z-axis points towards the viewer */
         // coneSpinAngle += 1;  /* add 1 degree */
         //redrawNeeded = false;
@@ -269,6 +283,7 @@ function drawScene() {
     pointLight2.draw(posAttr, colAttr, modelUnif, light2CF);
 
     var xPos = -1.2;
+    gl.uniform1i (useLightingUnif, showLight1);
     for(let i = 0; i < 3; i++){
         mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0.55));
         mat4.multiply(tmpMat, monitorCF, tmpMat);
@@ -286,7 +301,6 @@ function drawScene() {
         if(i == 2){
             mat4.rotateZ(tmpMat, tmpMat, -Math.PI/6);
         }
-        gl.uniform1i (useLightingUnif, showLight1);
         gl.disableVertexAttribArray(colAttr);
         gl.enableVertexAttribArray(normalAttr);
         objTint = vec3.fromValues(58/255, 58/255, 58/255);
@@ -317,14 +331,20 @@ function drawScene() {
     }
     gl.disableVertexAttribArray(colAttr);
     gl.enableVertexAttribArray(normalAttr);
-    mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, -1.75));
 
-    objTint = vec3.fromValues(170/255, 170/255, 170/255);
-    gl.uniform3fv(objTintUnif, objTint);
-    obj4.draw(posAttr, normalAttr, modelUnif, tmpMat);
-    gl.enableVertexAttribArray(colAttr);
-    gl.disableVertexAttribArray(normalAttr);
-    axes.draw(posAttr, colAttr, modelUnif, tmpMat);
+    if(typeof obj4 != 'undefined'){
+        tmpMat2 = mat4.create();
+        // mat4.fromTranslation(tmpMat2, vec3.fromValues(0, 0, -0.1));
+        // mat4.multiply(chairCF, tmpMat2, chairCF);
+        objTint = vec3.fromValues(170/255, 170/255, 170/255);
+        gl.uniform3fv(objTintUnif, objTint);
+        //mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, -1.5));
+        obj4.draw(posAttr, normalAttr, modelUnif, chairCF);
+        gl.enableVertexAttribArray(colAttr);
+        gl.disableVertexAttribArray(normalAttr);
+        gl.uniform1i(useLightingUnif, false);
+        axes.draw(posAttr, colAttr, modelUnif, chairCF);
+    }
 }
 
 function draw3D() {
@@ -468,15 +488,16 @@ function eyePosChanged(ev) {
     redrawNeeded = true;
 }
 
-function animate() {
-    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    draw3D();
+function animateChair() {
     let now = Date.now();
     let elapse = (now - timeStamp) / 1000; /* convert to second */
     timeStamp = now;
     let angle = elapse * (CHAIR_TIP_SPEED / 60) * Math.PI * 2;
     if (angle < 90) {
-        mat4.rotateX(chairCF, chairCF, angle);
-        requestAnimationFrame(animate);
+        this.chairAnimation = mat4.create();
+        let axisRot = vec3.fromValues(1,0,0);
+        mat4.fromRotation(this.chairAnimation, angle, axisRot);
+        mat4.multiply(chairCF, chairCF, this.chairAnimation);
+        //mat4.rotateX(chairCF, chairCF, angle);
     }
 }
