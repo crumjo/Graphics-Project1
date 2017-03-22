@@ -16,7 +16,8 @@ var timeStamp;
 var totalAngle = 0.0;
 var chairQuat;
 var startAnimation;
-const CHAIR_TIP_SPEED = 45;
+var now;
+const CHAIR_TIP_SPEED = 1;
 
 
 /* Vertex shader attribute variables */
@@ -72,6 +73,8 @@ function main() {
     animationCheckbox.addEventListener('change', ev => {
         startAnimation = ev.target.checked;
         redrawNeeded = true;
+        now = Date.now();
+        timeStamp = now;
     }, false);
 
     let lightxslider = document.getElementById("lightx");
@@ -489,15 +492,15 @@ function eyePosChanged(ev) {
 }
 
 function animateChair() {
-    let now = Date.now();
+    now = Date.now();
+    //timeStamp = now;
     let elapse = (now - timeStamp) / 1000; /* convert to second */
-    timeStamp = now;
     let angle = elapse * (CHAIR_TIP_SPEED / 60) * Math.PI * 2;
-    if (angle < 90) {
+    totalAngle += angle;
+    if (totalAngle <= Math.PI/2) {
         this.chairAnimation = mat4.create();
         let axisRot = vec3.fromValues(1,0,0);
         mat4.fromRotation(this.chairAnimation, angle, axisRot);
         mat4.multiply(chairCF, chairCF, this.chairAnimation);
-        //mat4.rotateX(chairCF, chairCF, angle);
     }
 }
