@@ -502,5 +502,6 @@ function animateChair() {
         let axisRot = vec3.fromValues(1,0,0);
         mat4.fromRotation(this.chairAnimation, angle, axisRot);
         mat4.multiply(chairCF, chairCF, this.chairAnimation);
+        mat4.translate(chairCF, chairCF, vec3.fromValues(0, -0.04, 0.02));
     }
 }
