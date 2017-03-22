@@ -13,6 +13,8 @@ var currentCF;
 var lightPos, useLightingUnif;
 var normalUnif, isEnabledUnif;
 var lightingComponentEnabled = [true, true, true];
+var timeStamp;
+const CHAIR_TIP_SPEED = 45;
 
 
 /* Vertex shader attribute variables */
@@ -47,6 +49,9 @@ function main() {
 
     let button2 = document.getElementById("select2");
     button2.addEventListener("click", selectObject);
+
+    let animateButton = document.getElementById("animate");
+    animateButton.addEventListener("click", animate);
 
     let lightxslider = document.getElementById("lightx");
     let lightyslider = document.getElementById("lighty");
@@ -361,5 +366,14 @@ function lightPosChanged(ev) {
 }
 
 function animate() {
-
+    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+    draw3D();
+    let now = Date.now();
+    let elapse = (now - timeStamp) / 1000; /* convert to second */
+    timeStamp = now;
+    let angle = elapse * (CHAIR_TIP_SPEED / 60) * Math.PI * 2;
+    if (angle < 90) {
+        mat4.rotateX(chairCF, chairCF, angle);
+        requestAnimationFrame(render);
+    }
 }
