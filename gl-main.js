@@ -30,11 +30,13 @@ var redrawNeeded, showNormal, showLightVectors;
 var coneSpinAngle;
 var obj, obj2, obj3, obj4, pointLight;
 var shaderProg;
+var axes;
 
 function main() {
     /* setup event listener for drop-down menu */
     let menu = document.getElementById("menu");
     menu.addEventListener("change", menuSelected);
+
 
     /* setup click listener for th "insert" button */
     let button = document.getElementById("select");
@@ -56,6 +58,7 @@ function main() {
     glCanvas = document.getElementById("gl-canvas");
     textOut = document.getElementById("msg");
     gl = WebGLUtils.setupWebGL(glCanvas, null);
+    axes = new Axes(gl);
     axisBuff = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, axisBuff);
     window.addEventListener("resize", resizeHandler, false);
@@ -93,7 +96,10 @@ function main() {
             deskCF = mat4.create();
             joystickCF = mat4.create();
             monitorCF = mat4.create();
+
             chairCF = mat4.create();
+            // mat4.translate(chairCF, chairCF, vec3.fromValues(1.0, 1.0, 0));
+
             lightCF = mat4.create();
             tmpMat = mat4.create();
             ambCoeffUnif = gl.getUniformLocation(prog, "ambientCoeff");
@@ -248,8 +254,13 @@ function drawScene() {
     gl.uniform1i (useLightingUnif, true);
     gl.disableVertexAttribArray(colAttr);
     gl.enableVertexAttribArray(normalAttr);
-    mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, 0));
+    mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, -1.75));
     obj4.draw(posAttr, normalAttr, modelUnif, tmpMat);
+    gl.uniform1i(useLightingUnif, false);
+    gl.enableVertexAttribArray(colAttr);
+    gl.disableVertexAttribArray(normalAttr);
+    axes.draw(posAttr, colAttr, modelUnif, tmpMat);
+
 }
 
 function draw3D() {
@@ -347,4 +358,8 @@ function lightPosChanged(ev) {
     gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff);
     gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
     redrawNeeded = true;
+}
+
+function animate() {
+
 }

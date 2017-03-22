@@ -18,9 +18,9 @@ class Chair{
         this.backSupport4 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
 
         this.chairLeg1 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
-        this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
-        this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
-        this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
+        // this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
+        // this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
+        // this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10, white, brown, brown);
 
         this.chairBackTransform = mat4.create();
         mat4.rotateX(this.chairBackTransform, this.chairBackTransform, Math.PI/2);
@@ -63,38 +63,46 @@ class Chair{
         this.backSupport4Transform = mat4.create();
         mat4.translate(this.backSupport4Transform, this.backSupport4Transform, vec3.fromValues(0.3, 0, 0));
 
+
+        this.localCoord = mat4.create();
+
         this.tmp = mat4.create();
     }
 
     draw (vertexAttr, colorAttr, modelUniform, coordFrame) {
-        mat4.mul (this.tmp, coordFrame, this.chairBackTransform);
+
+        this.localCoord = mat4.copy(this.localCoord, coordFrame);
+
+        mat4.translate(this.localCoord, this.localCoord, vec3.fromValues(0, -0.125, 1.675));
+
+        mat4.mul (this.tmp, this.localCoord, this.chairBackTransform);
         this.chairBack.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.chairBottomTransfrom);
+        mat4.mul (this.tmp, this.localCoord, this.chairBottomTransfrom);
         this.chairBottom.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.chairLeg1Transform);
+        mat4.mul (this.tmp, this.localCoord, this.chairLeg1Transform);
         this.chairLeg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.chairLeg2Transform);
-        this.chairLeg2.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, this.localCoord, this.chairLeg2Transform);
+        this.chairLeg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.chairLeg3Transform);
-        this.chairLeg3.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, this.localCoord, this.chairLeg3Transform);
+        this.chairLeg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.chairLeg4Transform);
-        this.chairLeg4.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, this.localCoord, this.chairLeg4Transform);
+        this.chairLeg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.backSupport1Transform);
+        mat4.mul (this.tmp, this.localCoord, this.backSupport1Transform);
         this.backSupport1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.backSupport2Transform);
+        mat4.mul (this.tmp, this.localCoord, this.backSupport2Transform);
         this.backSupport2.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.backSupport3Transform);
+        mat4.mul (this.tmp, this.localCoord, this.backSupport3Transform);
         this.backSupport3.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul (this.tmp, coordFrame, this.backSupport4Transform);
+        mat4.mul (this.tmp, this.localCoord, this.backSupport4Transform);
         this.backSupport4.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
     }
 }
