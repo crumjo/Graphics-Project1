@@ -4,8 +4,10 @@
     <list default="true" id="1902dd2d-67cd-4224-bd10-62c861c8061c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Chair.js" afterPath="$PROJECT_DIR$/Chair.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cube.js" afterPath="$PROJECT_DIR$/Cube.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cylinder.js" afterPath="$PROJECT_DIR$/Cylinder.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Desk.js" afterPath="$PROJECT_DIR$/Desk.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Torus.js" afterPath="$PROJECT_DIR$/Torus.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Joystick.js" afterPath="$PROJECT_DIR$/Joystick.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gl-main.js" afterPath="$PROJECT_DIR$/gl-main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vshader.glsl" afterPath="$PROJECT_DIR$/vshader.glsl" />
@@ -29,8 +31,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-433">
-              <caret line="10" column="17" lean-forward="true" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+            <state relative-caret-position="212">
+              <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -39,8 +41,28 @@
       <file leaf-file-name="gl-main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gl-main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="124" column="48" lean-forward="true" selection-start-line="124" selection-start-column="48" selection-end-line="124" selection-end-column="48" />
+            <state relative-caret-position="405">
+              <caret line="479" column="37" lean-forward="false" selection-start-line="479" selection-start-column="37" selection-end-line="479" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Axes.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Axes.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" column="22" lean-forward="false" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="vshader.glsl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vshader.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="675">
+              <caret line="45" column="3" lean-forward="false" selection-start-line="45" selection-start-column="3" selection-end-line="45" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -49,28 +71,8 @@
       <file leaf-file-name="Desk.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Desk.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Torus.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Torus.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="23" column="46" lean-forward="true" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Cube.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Cube.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-90">
-              <caret line="15" column="37" lean-forward="false" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
+            <state relative-caret-position="360">
+              <caret line="45" column="98" lean-forward="false" selection-start-line="45" selection-start-column="98" selection-end-line="45" selection-end-column="98" />
               <folding />
             </state>
           </provider>
@@ -92,6 +94,15 @@
       <find>isenabled</find>
       <find>isen</find>
       <find>isenabledunif</find>
+      <find>cull</find>
+      <find>showlight1</find>
+      <find>showlightv</find>
+      <find>showlight</find>
+      <find>showlightvec</find>
+      <find>lightposworld</find>
+      <find>lightpos</find>
+      <find>light1pos</find>
+      <find>uselighting</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -100,18 +111,20 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Monitor.js" />
-        <option value="$PROJECT_DIR$/Joystick.js" />
         <option value="$PROJECT_DIR$/UniSphere.js" />
         <option value="$PROJECT_DIR$/GeometricObject.js" />
         <option value="$PROJECT_DIR$/shader-utils.js" />
         <option value="$PROJECT_DIR$/Cube2.js" />
-        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/Torus.js" />
-        <option value="$PROJECT_DIR$/gl-main2.js" />
-        <option value="$PROJECT_DIR$/Chair.js" />
-        <option value="$PROJECT_DIR$/vshader.glsl" />
+        <option value="$PROJECT_DIR$/Cube.js" />
+        <option value="$PROJECT_DIR$/Monitor.js" />
         <option value="$PROJECT_DIR$/Desk.js" />
+        <option value="$PROJECT_DIR$/Cylinder.js" />
+        <option value="$PROJECT_DIR$/Joystick.js" />
+        <option value="$PROJECT_DIR$/gl-main2.js" />
+        <option value="$PROJECT_DIR$/vshader.glsl" />
+        <option value="$PROJECT_DIR$/Chair.js" />
+        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/gl-main.js" />
       </list>
     </option>
@@ -254,15 +267,15 @@
       <workItem from="1489413262213" duration="4237000" />
       <workItem from="1489593499735" duration="409000" />
       <workItem from="1489679806209" duration="842000" />
-      <workItem from="1489688173929" duration="11153000" />
+      <workItem from="1489688173929" duration="25576000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32076000" />
+    <option name="totallyTimeSpent" value="46499000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="701" extended-state="0" />
+    <frame x="0" y="23" width="1280" height="701" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25019857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -271,7 +284,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32416502" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3234811" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -312,14 +325,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Desk.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="39" lean-forward="true" selection-start-line="15" selection-start-column="39" selection-end-line="15" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Monitor.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -592,30 +597,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cylinder.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Monitor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="14" lean-forward="false" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Joystick.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="55" lean-forward="false" selection-start-line="24" selection-start-column="55" selection-end-line="24" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/WebGL.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
@@ -627,9 +608,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2730">
           <caret line="184" column="32" lean-forward="false" selection-start-line="184" selection-start-column="32" selection-end-line="184" selection-end-column="32" />
-          <folding>
-            <element signature="n#!!doc;n#Cube#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -665,68 +644,100 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gl-main2.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-285">
-          <caret line="46" column="41" lean-forward="false" selection-start-line="46" selection-start-column="41" selection-end-line="46" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#48#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-433">
-          <caret line="10" column="17" lean-forward="true" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vshader.glsl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="29" column="31" lean-forward="true" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Chair.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="21" lean-forward="true" selection-start-line="10" selection-start-column="21" selection-end-line="10" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Cube.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-90">
-          <caret line="15" column="37" lean-forward="false" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
+        <state relative-caret-position="210">
+          <caret line="42" column="9" lean-forward="true" selection-start-line="42" selection-start-column="9" selection-end-line="42" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Torus.js">
+    <entry file="file://$PROJECT_DIR$/Monitor.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="23" column="46" lean-forward="true" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
+        <state relative-caret-position="135">
+          <caret line="9" column="39" lean-forward="false" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Desk.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        <state relative-caret-position="360">
+          <caret line="45" column="98" lean-forward="false" selection-start-line="45" selection-start-column="98" selection-end-line="45" selection-end-column="98" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Torus.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="36" lean-forward="false" selection-start-line="26" selection-start-column="36" selection-end-line="26" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cylinder.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="750">
+          <caret line="50" column="36" lean-forward="false" selection-start-line="50" selection-start-column="36" selection-end-line="50" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Joystick.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="19" column="52" lean-forward="false" selection-start-line="19" selection-start-column="52" selection-end-line="19" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gl-main2.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="165" column="20" lean-forward="false" selection-start-line="165" selection-start-column="12" selection-end-line="165" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#48#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vshader.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="675">
+          <caret line="45" column="3" lean-forward="false" selection-start-line="45" selection-start-column="3" selection-end-line="45" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Axes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="22" lean-forward="false" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Chair.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1365">
+          <caret line="93" column="49" lean-forward="false" selection-start-line="93" selection-start-column="49" selection-end-line="93" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gl-main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="124" column="48" lean-forward="true" selection-start-line="124" selection-start-column="48" selection-end-line="124" selection-end-column="48" />
+        <state relative-caret-position="405">
+          <caret line="479" column="37" lean-forward="false" selection-start-line="479" selection-start-column="37" selection-end-line="479" selection-end-column="37" />
           <folding />
         </state>
       </provider>

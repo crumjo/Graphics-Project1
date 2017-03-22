@@ -4,13 +4,12 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, viewMatInverse, topViewMat, deskCF, joystickCF, monitorCF, chairCF, lightCF;
+var orthoProjMat, persProjMat, viewMat, viewMatInverse, topViewMat, deskCF, joystickCF, monitorCF, chairCF, light1CF, light2CF;
 var axisBuff, tmpMat, normalMat, eyePos;
-var globalAxes;
 var currSelection = 0;
 var objSelection = 0;
 var currentCF;
-var lightPos, useLightingUnif;
+var light1Pos, light2Pos, useLightingUnif, useLightingUnif2;
 var normalUnif, isEnabledUnif;
 var lightingComponentEnabled = [true, true, true];
 var timeStamp;
@@ -22,15 +21,16 @@ var posAttr, colAttr, normalAttr;
 
 /* Shader uniform variables */
 var projUnif, viewUnif, modelUnif, lightPosUnif;
-var objAmbientUnif, objTintUnif;
+var objTintUnif;
 var ambCoeffUnif, diffCoeffUnif, specCoeffUnif, shininessUnif;
 const IDENTITY = mat4.create();
-var lineBuff, normBuff, objTint;
-var redrawNeeded, showNormal, showLightVectors;
+var lineBuff, lineBuff2, normBuff, objTint;
+var redrawNeeded;
+var showLight1, showLight2;
 
 // const IDENTITY = mat4.create();
 var coneSpinAngle;
-var obj, obj2, obj3, obj4, pointLight;
+var obj, obj2, obj3, obj4, pointLight, pointLight2;
 var shaderProg;
 var axes;
 
@@ -53,12 +53,38 @@ function main() {
     let animateButton = document.getElementById("animate");
     animateButton.addEventListener("click", animate);
 
+    let light1CheckBox = document.getElementById("showLight1");
+    light1CheckBox.addEventListener('change', ev => {
+        showLight1 = ev.target.checked;
+        redrawNeeded = true;
+    }, false);
+
+    let light2CheckBox = document.getElementById("showLight2");
+    light2CheckBox.addEventListener('change', ev => {
+        showLight2 = ev.target.checked;
+        redrawNeeded = true;
+    }, false);
+
     let lightxslider = document.getElementById("lightx");
     let lightyslider = document.getElementById("lighty");
     let lightzslider = document.getElementById("lightz");
     lightxslider.addEventListener('input', lightPosChanged, false);
     lightyslider.addEventListener('input', lightPosChanged, false);
     lightzslider.addEventListener('input', lightPosChanged, false);
+
+    let lightx2slider = document.getElementById("lightx2");
+    let lighty2slider = document.getElementById("lighty2");
+    let lightz2slider = document.getElementById("lightz2");
+    lightx2slider.addEventListener('input', light2PosChanged, false);
+    lighty2slider.addEventListener('input', light2PosChanged, false);
+    lightz2slider.addEventListener('input', light2PosChanged, false);
+
+    let eyexslider = document.getElementById("eyex");
+    let eyeyslider = document.getElementById("eyey");
+    let eyezslider = document.getElementById("eyez");
+    eyexslider.addEventListener('input', eyePosChanged, false);
+    eyeyslider.addEventListener('input', eyePosChanged, false);
+    eyezslider.addEventListener('input', eyePosChanged, false);
 
     glCanvas = document.getElementById("gl-canvas");
     textOut = document.getElementById("msg");
@@ -78,6 +104,7 @@ function main() {
             //gl.enable(gl.CULL_FACE);     /* cull back facing polygons */
             //gl.cullFace(gl.BACK);
             lineBuff = gl.createBuffer();
+            lineBuff2 = gl.createBuffer();
             normBuff = gl.createBuffer();
             posAttr = gl.getAttribLocation(prog, "vertexPos");
             colAttr = gl.getAttribLocation(prog, "vertexCol");
@@ -88,6 +115,7 @@ function main() {
             modelUnif = gl.getUniformLocation(prog, "modelCF");
             normalUnif = gl.getUniformLocation(prog, "normalMat");
             useLightingUnif = gl.getUniformLocation (prog, "useLighting");
+            useLightingUnif2 = gl.getUniformLocation (prog, "useLighting2");
             objTintUnif = gl.getUniformLocation(prog, "objectTint");
             isEnabledUnif = gl.getUniformLocation(prog, "isEnabled");
              gl.enableVertexAttribArray(posAttr);
@@ -105,8 +133,15 @@ function main() {
             chairCF = mat4.create();
             // mat4.translate(chairCF, chairCF, vec3.fromValues(1.0, 1.0, 0));
 
-            lightCF = mat4.create();
+            light1CF = mat4.create();
+            light2CF = mat4.create();
             tmpMat = mat4.create();
+            eyePos = vec3.fromValues(3, 2, 3);
+            mat4.lookAt(viewMat,
+                eyePos,
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)); /* up */
+
             ambCoeffUnif = gl.getUniformLocation(prog, "ambientCoeff");
             diffCoeffUnif = gl.getUniformLocation(prog, "diffuseCoeff");
             specCoeffUnif = gl.getUniformLocation(prog, "specularCoeff");
@@ -116,17 +151,26 @@ function main() {
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             gl.uniformMatrix4fv(modelUnif, false, deskCF);
-            lightPos = vec3.fromValues(0, 0, 4);
+            light1Pos = vec3.fromValues(0, 0, 1);
             let vertices = [0, 0, 0, 1, 1, 1,
-                lightPos[0], 0, 0, 1, 1, 1,
-                lightPos[0], lightPos[1], 0, 1, 1, 1,
-                lightPos[0], lightPos[1], lightPos[2], 1, 1, 1];
+                light1Pos[0], 0, 0, 1, 1, 1,
+                light1Pos[0], light1Pos[1], 0, 1, 1, 1,
+                light1Pos[0], light1Pos[1], light1Pos[2], 1, 1, 1];
             gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff);
             gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
+
+            light2Pos = vec3.fromValues(0, 0, 1);
+            let vertices2 = [0, 0, 0, 1, 1, 1,
+                light2Pos[0], 0, 0, 1, 1, 1,
+                light2Pos[0], light2Pos[1], 0, 1, 1, 1,
+                light2Pos[0], light2Pos[1], light2Pos[2], 1, 1, 1];
+            gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff2);
+            gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices2), gl.STATIC_DRAW);
 
             gl.uniform3i(isEnabledUnif, true, true, true);
             let yellow = vec3.fromValues (0xe7/255, 0xf2/255, 0x4d/255);
             pointLight = new UniSphere(gl, 0.03, 3, yellow, yellow);
+            pointLight2 = new UniSphere(gl, 0.03, 3, yellow, yellow);
 
             gl.uniform1f(ambCoeffUnif, 0.19);
             gl.uniform1f(diffCoeffUnif, 0.50);
@@ -139,7 +183,6 @@ function main() {
             obj2 = new Joystick(gl);
             obj3 = new Monitor(gl);
             obj4 = new Chair(gl);
-            // mat4.rotateX(deskCF, deskCF, -Math.PI/2);
             coneSpinAngle = 0;
             redrawNeeded = true;
             resizeHandler();
@@ -166,12 +209,12 @@ function resizeHandler() {
 }
 
 function keyboardHandler(event) {
-    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(1, 0, 0));
-    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-1, 0, 0));
-    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 1, 0));
-    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, -1, 0));
-    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 1));
-    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, -1));
+    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(0.5, 0, 0));
+    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-0.5, 0, 0));
+    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0.5, 0));
+    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, -0.5, 0));
+    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0.5));
+    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, -0.5));
     switch (event.key) {
         case "x":
             mat4.multiply(currentCF, transXneg, currentCF);  // deskCF = Trans * deskCF
@@ -192,9 +235,6 @@ function keyboardHandler(event) {
             mat4.multiply(currentCF, transZpos, currentCF);  // deskCF = Trans * deskCF
             break;
     }
-    textOut.innerHTML = "Ring origin (" + deskCF[12].toFixed(1) + ", "
-        + deskCF[13].toFixed(1) + ", "
-        + deskCF[14].toFixed(1) + ")";
 }
 
 function render() {
@@ -207,9 +247,6 @@ function render() {
 }
 
 function drawScene() {
-    //globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
-    // mat4.translate(tmpMat, tmpMat, vec3.fromValues(-1.2, 0, 0.55));
-    // obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
     gl.uniform1i(useLightingUnif, false);
     gl.disableVertexAttribArray(normalAttr);
     gl.enableVertexAttribArray(colAttr);
@@ -221,8 +258,15 @@ function drawScene() {
     gl.vertexAttribPointer(colAttr, 3, gl.FLOAT, false, 24, 12);
     gl.drawArrays(gl.LINE_STRIP, 0, 4);
 
+    gl.uniformMatrix4fv(modelUnif, false, IDENTITY);
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff2);
+    gl.vertexAttribPointer(posAttr, 3, gl.FLOAT, false, 24, 0);
+    gl.vertexAttribPointer(colAttr, 3, gl.FLOAT, false, 24, 12);
+    gl.drawArrays(gl.LINE_STRIP, 0, 4);
+
     /* Draw the light source (a sphere) using its own coordinate frame */
-    pointLight.draw(posAttr, colAttr, modelUnif, lightCF);
+    pointLight.draw(posAttr, colAttr, modelUnif, light1CF);
+    pointLight2.draw(posAttr, colAttr, modelUnif, light2CF);
 
     var xPos = -1.2;
     for(let i = 0; i < 3; i++){
@@ -242,30 +286,45 @@ function drawScene() {
         if(i == 2){
             mat4.rotateZ(tmpMat, tmpMat, -Math.PI/6);
         }
-        obj3.draw(posAttr, colAttr, modelUnif, tmpMat);
+        gl.uniform1i (useLightingUnif, showLight1);
+        gl.disableVertexAttribArray(colAttr);
+        gl.enableVertexAttribArray(normalAttr);
+        objTint = vec3.fromValues(58/255, 58/255, 58/255);
+        gl.uniform3fv(objTintUnif, objTint);
+        obj3.draw(posAttr, normalAttr, modelUnif, tmpMat);
         xPos += 1.2;
     }
     tmpMat = mat4.create();
     mat4.scale(tmpMat, joystickCF, [0.2,0.2,0.2]);
     mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, -3, 0.2));
-    obj2.draw(posAttr, colAttr, modelUnif, tmpMat);
+    objTint = vec3.fromValues(168/255, 0/255, 0/255);
+    gl.uniform3fv(objTintUnif, objTint);
+    obj2.draw(posAttr, normalAttr, modelUnif, tmpMat);
 
     if (typeof obj !== 'undefined') {
         var yPos = 0;
         mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
         mat4.multiply(tmpMat, deskCF, tmpMat);   // tmp = deskCF * tmpMat
-        obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+        objTint = vec3.fromValues(124/255, 79/255, 0/255);
+        gl.uniform3fv(objTintUnif, objTint);
+
+        // gl.uniform1f(ambCoeffUnif, 0);
+        // gl.uniform1f(diffCoeffUnif, 0.01);
+        // gl.uniform1f(specCoeffUnif, 0.50);
+        // gl.uniform1f(shininessUnif, 32);
+
+        obj.draw(posAttr, normalAttr, modelUnif, tmpMat);
     }
-    gl.uniform1i (useLightingUnif, true);
     gl.disableVertexAttribArray(colAttr);
     gl.enableVertexAttribArray(normalAttr);
     mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, -1.75));
+
+    objTint = vec3.fromValues(170/255, 170/255, 170/255);
+    gl.uniform3fv(objTintUnif, objTint);
     obj4.draw(posAttr, normalAttr, modelUnif, tmpMat);
-    gl.uniform1i(useLightingUnif, false);
     gl.enableVertexAttribArray(colAttr);
     gl.disableVertexAttribArray(normalAttr);
     axes.draw(posAttr, colAttr, modelUnif, tmpMat);
-
 }
 
 function draw3D() {
@@ -344,24 +403,68 @@ function selectObject(){
 function lightPosChanged(ev) {
     switch (ev.target.id) {
         case 'lightx':
-            lightPos[0] = ev.target.value;
+            light1Pos[0] = ev.target.value;
             break;
         case 'lighty':
-            lightPos[1] = ev.target.value;
+            light1Pos[1] = ev.target.value;
             break;
         case 'lightz':
-            lightPos[2] = ev.target.value;
+            light1Pos[2] = ev.target.value;
             break;
     }
-    mat4.fromTranslation(lightCF, lightPos);
-    gl.uniform3fv (lightPosUnif, lightPos);
+    mat4.fromTranslation(light1CF, light1Pos);
+    gl.uniform3fv (lightPosUnif, light1Pos);
     let vertices = [
         0, 0, 0, 1, 1, 1,
-        lightPos[0], 0, 0, 1, 1, 1,
-        lightPos[0], lightPos[1], 0, 1, 1, 1,
-        lightPos[0], lightPos[1], lightPos[2], 1, 1, 1];
+        light1Pos[0], 0, 0, 1, 1, 1,
+        light1Pos[0], light1Pos[1], 0, 1, 1, 1,
+        light1Pos[0], light1Pos[1], light1Pos[2], 1, 1, 1];
     gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff);
     gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
+    redrawNeeded = true;
+}
+
+function light2PosChanged(ev) {
+    switch (ev.target.id) {
+        case 'lightx2':
+            light2Pos[0] = ev.target.value;
+            break;
+        case 'lighty2':
+            light2Pos[1] = ev.target.value;
+            break;
+        case 'lightz2':
+            light2Pos[2] = ev.target.value;
+            break;
+    }
+    mat4.fromTranslation(light2CF, light2Pos);
+    gl.uniform3fv (lightPosUnif, light2Pos);
+    let vertices = [
+        0, 0, 0, 1, 1, 1,
+        light2Pos[0], 0, 0, 1, 1, 1,
+        light2Pos[0], light2Pos[1], 0, 1, 1, 1,
+        light2Pos[0], light2Pos[1], light2Pos[2], 1, 1, 1];
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineBuff2);
+    gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from(vertices), gl.STATIC_DRAW);
+    redrawNeeded = true;
+}
+
+function eyePosChanged(ev) {
+    switch (ev.target.id) {
+        case 'eyex':
+            eyePos[0] = ev.target.value;
+            break;
+        case 'eyey':
+            eyePos[1] = ev.target.value;
+            break;
+        case 'eyez':
+            eyePos[2] = ev.target.value;
+            break;
+    }
+    mat4.lookAt(viewMat,
+        eyePos,
+        vec3.fromValues(0, 0, 0), /* focal point */
+        vec3.fromValues(0, 0, 1)); /* up */
+    mat4.invert (viewMatInverse, viewMat);
     redrawNeeded = true;
 }
 
@@ -374,6 +477,6 @@ function animate() {
     let angle = elapse * (CHAIR_TIP_SPEED / 60) * Math.PI * 2;
     if (angle < 90) {
         mat4.rotateX(chairCF, chairCF, angle);
-        requestAnimationFrame(render);
+        requestAnimationFrame(animate);
     }
 }

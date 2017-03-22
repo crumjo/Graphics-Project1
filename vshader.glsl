@@ -14,6 +14,7 @@ uniform float specularCoeff;
 uniform float shininess;
 uniform vec3 objectTint;
 uniform bool useLighting;
+uniform bool useLighting2;
 uniform bvec3 isEnabled;
 
 varying vec4 varColor;
@@ -30,7 +31,6 @@ void main() {
     vec3 normalInEye = normalize(normalMat * vertexNormal);
     if(isEnabled[0]){
         color += ambientCoeff * objectTint;
-//        color = vec3 (1,0,0);
     }
     if(isEnabled[1]){
         float diffuse = clamp(dot(lightVecInEye, normalInEye), 0.0, 1.0);

@@ -10,14 +10,14 @@ this.black = vec3.fromValues (50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
 class Joystick {
     constructor (gl) {
         this.base = new Cube(gl, 1, 5, grey, grey, black);
-        this.stick = new Cylinder(gl, 0.125, 0.125, 1.0, 10, black, black);
+        this.stick = new Cylinder(gl, 0.125, 0.125, 1.0, 10, 10, black, black);
         this.ball = new Globe(gl, 0.5, 20, 10, black, red);
         this.button = new Cylinder(gl, 0.25, 0.25, 0.1, 20, white, white);
         this.buttonRecess = new Cylinder(gl, 0.27, 0.27, 0.02, 20, black, black);
-        this.joint = new Torus(gl, 0.25, 0.15, 30, 30, black, black);
+        this.joint = new Torus(gl, 0.25, 0.15, 30, 30);
 
         let moveBaseUp = vec3.fromValues (0, 0, 0.5);
-        let moveStickUp = vec3.fromValues (0, 0, 1.0);
+        let moveStickUp = vec3.fromValues (0, 0, 0.7);
         let moveBallUp = vec3.fromValues (0, 0, 1.75);
         let moveButtonUp = vec3.fromValues (0, 0, 0.5);
         let moveButtonForward = vec3.fromValues (0, -0.7, 0);

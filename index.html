@@ -59,11 +59,30 @@
 
 <button id="animate">Animate</button>
 
+<div id="vectorcontrol">
+    <span><input id="showLight1" type="checkbox"> Show Light 1</span>
+    <span><input id="showLight2" type="checkbox"> Show Light 2</span>
+</div>
+
 <div id="lightcontrol" class="sliderGroup">
-    Light Position
+    Light 1 Position
     <span>X: <input id="lightx" type="range" min="-3" max="3" step="0.05"></span>
     <span>Y: <input id="lighty" type="range" min="-3" max="3" step="0.05"></span>
     <span>Z: <input id="lightz" type="range" min="-1" max="5" step="0.05"></span>
+</div>
+
+<div id="lightcontrol2" class="sliderGroup">
+    Light 2 Position
+    <span>X: <input id="lightx2" type="range" min="-3" max="3" step="0.05"></span>
+    <span>Y: <input id="lighty2" type="range" min="-3" max="3" step="0.05"></span>
+    <span>Z: <input id="lightz2" type="range" min="-1" max="5" step="0.05"></span>
+</div>
+
+<div class="sliderGroup">
+    Eye Position
+    <span>X: <input id="eyex" type="range" min="-4" max="4" step="0.05"></span>
+    <span>Y: <input id="eyey" type="range" min="-4" max="4" step="0.05"></span>
+    <span>Z: <input id="eyez" type="range" min="-3" max="5" step="0.05"></span>
 </div>
 
 <canvas id="gl-canvas"></canvas>

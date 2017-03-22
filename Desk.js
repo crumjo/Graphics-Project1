@@ -14,8 +14,8 @@ class Desk {
         this.tableTop = new Cube(gl, 1, 5, blue, grey, black);
         this.tableDrawer = new Cube(gl, 1, 5, black, grey, white);
 
-        this.leg1 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
-        this.leg2 = new Cylinder(gl, 0.08, 0.08, 1.8, 10, black, grey);
+        this.leg1 = new Cylinder(gl, 0.08, 0.08, 2, 10, 10, black, grey);
+        this.leg2 = new Cylinder(gl, 0.08, 0.08, 2, 10, 10, black, grey);
         this.topHandle = new Torus(gl, 0.27, 0.05, 30, 30);
         this.middleHandle = new Torus(gl, 0.27, 0.05, 30, 30);
         this.bottomHandle = new Torus(gl, 0.27, 0.05, 30, 30);
@@ -38,12 +38,12 @@ class Desk {
         mat4.scale(this.tableDrawerTransformation, this.tableDrawerTransformation, [1.1, 2.2, 1.8]);
 
         this.leg1Transformation = mat4.create();
-        mat4.translate(this.leg1Transformation, this.leg1Transformation, moveDown);
+        mat4.translate(this.leg1Transformation, this.leg1Transformation, vec3.fromValues(0,0, -1.8));
         mat4.translate(this.leg1Transformation, this.leg1Transformation, moveRight);
         mat4.translate(this.leg1Transformation, this.leg1Transformation, moveBack);
 
         this.leg2Transformation = mat4.create();
-        mat4.translate(this.leg2Transformation, this.leg2Transformation, moveDown);
+        mat4.translate(this.leg2Transformation, this.leg2Transformation, vec3.fromValues(0,0, -1.8));
         mat4.translate(this.leg2Transformation, this.leg2Transformation, moveRight);
         mat4.translate(this.leg2Transformation, this.leg2Transformation, moveForward);
 

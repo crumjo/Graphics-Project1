@@ -32,12 +32,12 @@ class Cube {
 
         this.index = [];
 
-        this.split (subDiv, 0, 1, 2, 3, col1); /* top: Z+ */
-        this.split (subDiv, 0, 4, 5, 1, col2); /* front: Y- */
-        this.split (subDiv, 4, 7, 6, 5, col1); /* bottom: Z- */
-        this.split (subDiv, 2, 6, 7, 3, col2); /* back: Y+ */
-        this.split (subDiv, 1, 5, 6, 2, col3); /* right: X+ */
-        this.split (subDiv, 0, 3, 7, 4, col3); /* left: X- */
+        this.split (subDiv, 0, 1, 2, 3, vec3.fromValues(0,0,1)); /* top: Z+ */
+        this.split (subDiv, 0, 4, 5, 1, vec3.fromValues(0,-1,0)); /* front: Y- */
+        this.split (subDiv, 4, 7, 6, 5, vec3.fromValues(0,0,-1)); /* bottom: Z- */
+        this.split (subDiv, 2, 6, 7, 3, vec3.fromValues(0,1,0)); /* back: Y+ */
+        this.split (subDiv, 1, 5, 6, 2, vec3.fromValues(1,0,0)); /* right: X+ */
+        this.split (subDiv, 0, 3, 7, 4, vec3.fromValues(-1,0,0)); /* left: X- */
         let vertices = [];
         for (let k = 0; k < this.vex.length; k++)
         {
