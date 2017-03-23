@@ -43,7 +43,6 @@ function main() {
     let menu = document.getElementById("menu");
     menu.addEventListener("change", menuSelected);
 
-
     /* setup click listener for th "insert" button */
     let button = document.getElementById("select");
     button.addEventListener("click", createObject);
@@ -164,6 +163,7 @@ function main() {
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             gl.uniformMatrix4fv(modelUnif, false, deskCF);
+
             light1Pos = vec3.fromValues(0, 0, 1);
             let vertices = [0, 0, 0, 1, 1, 1,
                 light1Pos[0], 0, 0, 1, 1, 1,
@@ -265,6 +265,7 @@ function render() {
 
 function drawScene() {
     gl.uniform1i(useLightingUnif, false);
+    gl.uniform1i(useLightingUnif2, false);
     gl.disableVertexAttribArray(normalAttr);
     gl.enableVertexAttribArray(colAttr);
 
@@ -287,6 +288,7 @@ function drawScene() {
 
     var xPos = -1.2;
     gl.uniform1i (useLightingUnif, showLight1);
+    gl.uniform1i (useLightingUnif2, showLight2);
     for(let i = 0; i < 3; i++){
         mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0.55));
         mat4.multiply(tmpMat, monitorCF, tmpMat);
@@ -311,6 +313,7 @@ function drawScene() {
         obj3.draw(posAttr, normalAttr, modelUnif, tmpMat);
         xPos += 1.2;
     }
+
     tmpMat = mat4.create();
     mat4.scale(tmpMat, joystickCF, [0.2,0.2,0.2]);
     mat4.translate(tmpMat, tmpMat, vec3.fromValues(0, -3, 0.2));
@@ -346,6 +349,7 @@ function drawScene() {
         gl.enableVertexAttribArray(colAttr);
         gl.disableVertexAttribArray(normalAttr);
         gl.uniform1i(useLightingUnif, false);
+        gl.uniform1i(useLightingUnif2, false);
         axes.draw(posAttr, colAttr, modelUnif, chairCF);
     }
 }
@@ -361,6 +365,7 @@ function draw3D() {
     drawScene();
     if (typeof obj4 !== 'undefined') {
         gl.uniform1i(useLightingUnif, false);
+        gl.uniform1i(useLightingUnif2, false);
         gl.disableVertexAttribArray(normalAttr);
         gl.enableVertexAttribArray(colAttr);
     }
