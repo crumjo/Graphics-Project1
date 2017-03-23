@@ -350,7 +350,7 @@ function drawScene() {
         gl.disableVertexAttribArray(normalAttr);
         gl.uniform1i(useLightingUnif, false);
         gl.uniform1i(useLightingUnif2, false);
-        axes.draw(posAttr, colAttr, modelUnif, chairCF);
+        // axes.draw(posAttr, colAttr, modelUnif, chairCF);
     }
 }
 
