@@ -17,7 +17,7 @@ class Chair{
         this.backSupport3 = new Cylinder(gl, 0.05, 0.05, 1.4, 10, 10, white, brown, brown);
         this.backSupport4 = new Cylinder(gl, 0.05, 0.05, 1.1, 10, 10, white, brown, brown);
 
-        this.chairLeg1 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
+        this.chairLeg1 = new Cylinder(gl, 0.05, 0.05, 1.2, 10, 10, white, brown, brown);
         // this.chairLeg2 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
         // this.chairLeg3 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
         // this.chairLeg4 = new Cylinder(gl, 0.05, 0.05, 1, 10, 10, white, brown, brown);
@@ -32,22 +32,22 @@ class Chair{
         mat4.translate(this.chairBottomTransfrom, this.chairBottomTransfrom, vec3.fromValues(0, 0.5, 0));
 
         this.chairLeg1Transform = mat4.create();
-        mat4.translate(this.chairLeg1Transform, this.chairLeg1Transform, vec3.fromValues(0, 0, -1.55));
+        mat4.translate(this.chairLeg1Transform, this.chairLeg1Transform, vec3.fromValues(0, 0, -1.7));
         mat4.translate(this.chairLeg1Transform, this.chairLeg1Transform, vec3.fromValues(0.35 , 0, 0));
         mat4.translate(this.chairLeg1Transform, this.chairLeg1Transform, vec3.fromValues(0, 0.1, 0));
 
         this.chairLeg2Transform = mat4.create();
-        mat4.translate(this.chairLeg2Transform, this.chairLeg2Transform, vec3.fromValues(0, 0, -1.55));
+        mat4.translate(this.chairLeg2Transform, this.chairLeg2Transform, vec3.fromValues(0, 0, -1.7));
         mat4.translate(this.chairLeg2Transform, this.chairLeg2Transform, vec3.fromValues(-0.35 , 0, 0));
         mat4.translate(this.chairLeg2Transform, this.chairLeg2Transform, vec3.fromValues(0, 0.1, 0));
 
         this.chairLeg3Transform = mat4.create();
-        mat4.translate(this.chairLeg3Transform, this.chairLeg3Transform, vec3.fromValues(0, 0, -1.55));
+        mat4.translate(this.chairLeg3Transform, this.chairLeg3Transform, vec3.fromValues(0, 0, -1.7));
         mat4.translate(this.chairLeg3Transform, this.chairLeg3Transform, vec3.fromValues(-0.35 , 0, 0));
         mat4.translate(this.chairLeg3Transform, this.chairLeg3Transform, vec3.fromValues(0, 1, 0));
 
         this.chairLeg4Transform = mat4.create();
-        mat4.translate(this.chairLeg4Transform, this.chairLeg4Transform, vec3.fromValues(0, 0, -1.55));
+        mat4.translate(this.chairLeg4Transform, this.chairLeg4Transform, vec3.fromValues(0, 0, -1.7));
         mat4.translate(this.chairLeg4Transform, this.chairLeg4Transform, vec3.fromValues(0.35 , 0, 0));
         mat4.translate(this.chairLeg4Transform, this.chairLeg4Transform, vec3.fromValues(0, 1, 0));
 

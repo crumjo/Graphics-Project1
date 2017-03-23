@@ -8,6 +8,7 @@ uniform mat4 modelCF;
 uniform mat3 normalMat;
 
 uniform vec3 lightPosWorld;
+uniform vec3 lightPosWorld2;
 uniform float diffuseCoeff;
 uniform float ambientCoeff;
 uniform float specularCoeff;
@@ -24,6 +25,8 @@ void main() {
 
   vec4 vertexPosInEye = view * modelCF * vec4(vertexPos, 1);
   vec4 lightPosInEye = view * vec4 (lightPosWorld,1);
+  vec4 lightPosInEye2 = view * vec4 (lightPosWorld2,1);
+
   gl_Position = projection * vertexPosInEye;
   if(useLighting){
     vec3 color = vec3(0,0,0);
@@ -45,6 +48,6 @@ void main() {
     varColor = vec4 (color, 1.0);
   }
   else{
-        varColor = vec4 (vertexCol, 1.0);
+    varColor = vec4 (vertexCol, 1.0);
   }
 }

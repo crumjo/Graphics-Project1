@@ -5,7 +5,7 @@
 var gl;
 var glCanvas, textOut;
 var orthoProjMat, persProjMat, viewMat, viewMatInverse, topViewMat, deskCF, joystickCF, monitorCF, chairCF, light1CF, light2CF;
-var axisBuff, tmpMat, tmpMat2, normalMat, eyePos;
+var axisBuff, tmpMat, normalMat, eyePos;
 var currSelection = 0;
 var objSelection = 0;
 var currentCF;
@@ -14,9 +14,9 @@ var normalUnif, isEnabledUnif;
 var lightingComponentEnabled = [true, true, true];
 var timeStamp;
 var totalAngle = 0.0;
-var chairQuat;
 var startAnimation;
 var now;
+var translationAmount = -1.5;
 const CHAIR_TIP_SPEED = 1;
 
 
@@ -24,7 +24,7 @@ const CHAIR_TIP_SPEED = 1;
 var posAttr, colAttr, normalAttr;
 
 /* Shader uniform variables */
-var projUnif, viewUnif, modelUnif, lightPosUnif;
+var projUnif, viewUnif, modelUnif, lightPosUnif, lightPosUnif2;
 var objTintUnif;
 var ambCoeffUnif, diffCoeffUnif, specCoeffUnif, shininessUnif;
 const IDENTITY = mat4.create();
@@ -123,6 +123,7 @@ function main() {
             colAttr = gl.getAttribLocation(prog, "vertexCol");
             normalAttr = gl.getAttribLocation(prog, "vertexNormal");
             lightPosUnif = gl.getUniformLocation(prog, "lightPosWorld");
+            lightPosUnif2 = gl.getUniformLocation(prog, "lightPosWorld2");
             projUnif = gl.getUniformLocation(prog, "projection");
             viewUnif = gl.getUniformLocation(prog, "view");
             modelUnif = gl.getUniformLocation(prog, "modelCF");
@@ -229,6 +230,14 @@ function keyboardHandler(event) {
     const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, -0.5, 0));
     const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0.5));
     const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, -0.5));
+
+    const rotateXpos = mat4.fromRotation(mat4.create(), 0.2, vec3.fromValues(1,0,0));
+    const rotateXneg = mat4.fromRotation(mat4.create(), 0.2, vec3.fromValues(-1,0,0));
+    const rotateYpos = mat4.fromRotation(mat4.create(), 0.2, vec3.fromValues(0,1,0));
+    const rotateYneg = mat4.fromRotation(mat4.create(), 0.2, vec3.fromValues(0,-1,0));
+    const rotateZpos = mat4.fromRotation(mat4.create(), 0.2, vec3.fromValues(0,0,1));
+    const rotateZneg = mat4.fromRotation(mat4.create(), 0.2, vec3.fromValues(0,0,-1));
+
     switch (event.key) {
         case "x":
             mat4.multiply(currentCF, transXneg, currentCF);  // deskCF = Trans * deskCF
@@ -247,6 +256,24 @@ function keyboardHandler(event) {
             break;
         case "Z":
             mat4.multiply(currentCF, transZpos, currentCF);  // deskCF = Trans * deskCF
+            break;
+        case "q":
+            mat4.multiply(currentCF, rotateXpos, currentCF);
+            break;
+        case "Q":
+            mat4.multiply(currentCF, rotateXneg, currentCF);
+            break;
+        case "w":
+            mat4.multiply(currentCF, rotateYpos, currentCF);
+            break;
+        case "W":
+            mat4.multiply(currentCF, rotateYneg, currentCF);
+            break;
+        case "e":
+            mat4.multiply(currentCF, rotateZpos, currentCF);
+            break;
+        case "E":
+            mat4.multiply(currentCF, rotateZneg, currentCF);
             break;
     }
 }
@@ -288,7 +315,6 @@ function drawScene() {
 
     var xPos = -1.2;
     gl.uniform1i (useLightingUnif, showLight1);
-    gl.uniform1i (useLightingUnif2, showLight2);
     for(let i = 0; i < 3; i++){
         mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0.55));
         mat4.multiply(tmpMat, monitorCF, tmpMat);
@@ -339,17 +365,12 @@ function drawScene() {
     gl.enableVertexAttribArray(normalAttr);
 
     if(typeof obj4 != 'undefined'){
-        tmpMat2 = mat4.create();
-        // mat4.fromTranslation(tmpMat2, vec3.fromValues(0, 0, -0.1));
-        // mat4.multiply(chairCF, tmpMat2, chairCF);
         objTint = vec3.fromValues(170/255, 170/255, 170/255);
         gl.uniform3fv(objTintUnif, objTint);
-        //mat4.translate(tmpMat, chairCF, vec3.fromValues(0, -1.5, -1.5));
         obj4.draw(posAttr, normalAttr, modelUnif, chairCF);
         gl.enableVertexAttribArray(colAttr);
         gl.disableVertexAttribArray(normalAttr);
         gl.uniform1i(useLightingUnif, false);
-        gl.uniform1i(useLightingUnif2, false);
         // axes.draw(posAttr, colAttr, modelUnif, chairCF);
     }
 }
@@ -498,15 +519,21 @@ function eyePosChanged(ev) {
 
 function animateChair() {
     now = Date.now();
-    //timeStamp = now;
     let elapse = (now - timeStamp) / 1000; /* convert to second */
     let angle = elapse * (CHAIR_TIP_SPEED / 60) * Math.PI * 2;
     totalAngle += angle;
     if (totalAngle <= Math.PI/2) {
+        this.composite = mat4.create();
         this.chairAnimation = mat4.create();
+        this.chairTranslation = mat4.create();
         let axisRot = vec3.fromValues(1,0,0);
         mat4.fromRotation(this.chairAnimation, angle, axisRot);
-        mat4.multiply(chairCF, chairCF, this.chairAnimation);
-        mat4.translate(chairCF, chairCF, vec3.fromValues(0, -0.04, 0.02));
+        //mat4.multiply(chairCF, chairCF, this.chairAnimation);
+
+        mat4.fromTranslation(this.chairTranslation, vec3.fromValues(0,-0.03,0));
+        //mat4.multiply(chairCF, this.chairTranslation, chairCF);
+
+        mat4.multiply(this.composite, this.chairAnimation, this.chairTranslation);
+        mat4.multiply(chairCF, chairCF, this.composite);
     }
 }
